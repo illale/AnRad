@@ -20,7 +20,6 @@ public class ChannelFragment extends Fragment {
     private RecyclerView.LayoutManager manager;
 
     public ChannelFragment() {
-
     }
 
     public static ChannelFragment newInstance() {
@@ -44,8 +43,9 @@ public class ChannelFragment extends Fragment {
         FragmentActivity ct = getActivity();
         channels = getResources().getStringArray(R.array.channel_names);
         recyclerView = (RecyclerView)view.findViewById(R.id.recycler);
-        recyclerView.setHasFixedSize(true);
+        //recyclerView.setHasFixedSize(true);
         manager = new LinearLayoutManager(ct);
+        recyclerView.setLayoutManager(manager);
         adapter = new MyAdapter(channels);
         recyclerView.setAdapter(adapter);
 

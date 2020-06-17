@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
             "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=58&next_token=&limit=20"
     };
     BottomNavigationView bottomNavigationView;
-    String[] channelNames = {"YLEX", "RADIO NOVA", "SUOMI-ROCK", "NRJ", "ISKELMA", "PUHE", "RADIO HELMI", "RADIO ROCK", "RADIO SUOMI-POP", "AITO-ISKELMA"};
+    String[] channelNames = {"YLEX", "RADIO NOVA", "SUOMI-ROCK", "NRJ", "ISKELMÄ", "PUHE", "RADIO HELMI", "RADIO ROCK", "SUOMI-POP", "AITO-ISKELMÄ"};
     Uri uri = null;
     int index = 0;
 
@@ -95,6 +95,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void setSong(int i) {
 
+    }
+
+    public int checkChannel(String channel) {
+        for (int i = 0; i <= channelNames.length; i++) {
+            if (channelNames[i].equals(channel)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public void setUri(View v) {
+        if (player != null) {
+            player.release();
+        }
+        index = checkChannel(((TextView)v).getText().toString());
+        player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
+        String url = channels[index];
+        uri = Uri.parse(url);
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
+                Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
+        MediaSource audioSource = null;
+        if (url.contains(".m3u8")) {
+            audioSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+        } else {
+            audioSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+        }
+        player.prepare(audioSource);
+        player.setPlayWhenReady(true);
     }
 
     public void nextUri(View v) {
