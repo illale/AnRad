@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">AndroidRadio</string>
+    <string name="logo_of_channel_playing">Logo of channel playing</string>
+    <string name="choose_previous_channel">Choose previous channel</string>
+    <string name="pause_playback">Pause playback</string>
+    <string name="start_playback">Start playback</string>
+    <string name="choose_next_channel">Choose next channel</string>
+    <string-array name="channel_names">
+        <item>YLEX</item>
+        <item>RADIO NOVA</item>
+        <item>RADIO ROCK</item>
+        <item>RADIO HELMI</item>
+        <item>AITO ISKELMÄ</item>
+        <item>ISKELMÄ</item>
+        <item>SUOMI-POP</item>
+        <item>NRJ</item>
+        <item>SUOMI-ROCK</item>
+        <item>PUHE</item>
+    </string-array>
+</resources>
