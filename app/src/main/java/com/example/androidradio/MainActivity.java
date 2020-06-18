@@ -10,8 +10,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -20,6 +26,9 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     SimpleExoPlayer player = null;
@@ -48,8 +57,10 @@ public class MainActivity extends AppCompatActivity {
     };
     BottomNavigationView bottomNavigationView;
     String[] channelNames = {"YLEX", "RADIO NOVA", "SUOMI-ROCK", "NRJ", "ISKELMÄ", "PUHE", "RADIO HELMI", "RADIO ROCK", "SUOMI-POP", "AITO-ISKELMÄ"};
+    int[] images = {R.drawable.ylex, R.drawable.radionova, R.drawable.suomirock, R.drawable.nrj, R.drawable.iskelma_valt, R.drawable.yle_puhe, R.drawable.helmiradio, R.drawable.radio_rock, R.drawable.radio_suomipop, R.drawable.aito_iskelma};
     Uri uri = null;
     int index = 0;
+    public static boolean PLAYING = false;
 
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -57,12 +68,14 @@ public class MainActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
     public void play(View v) {
         if (player == null) {
             player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
             String url = channels[index];
             uri = Uri.parse(url);
-            setText(index);
+            changeButton("stop");
+            setImage(index);
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                     Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
             MediaSource audioSource = null;
@@ -74,11 +87,19 @@ public class MainActivity extends AppCompatActivity {
             player.prepare(audioSource);
             player.setPlayWhenReady(true);
         } else {
+            changeButton("play");
+            PLAYING = false;
+            player.release();
+            player = null;
             Log.println(Log.INFO, "D", "Player already setup");
         }
     }
 
     public void stop(View v) {
+        //Currently this is not used, but it should be used when pausing instead of release,
+        //if I am correct, the player doesnt have to initialize after stoping, but will have to after
+        //releasing the player. Confirm from the docs and chage the behaviour of play function if needed.
+        //NOTE: clear the player intialization part to single method, and let play, nextUri and previousUri call it.
         player.stop();
     }
 
@@ -87,14 +108,47 @@ public class MainActivity extends AppCompatActivity {
         player = null;
     }
 
-    public void setText(int i) {
-        TextView view = (TextView)findViewById(R.id.textView2);
-        view.setText(channelNames[i]);
+    public void changeButton(String state) {
+        if (state.equals("stop")) {
+            ImageButton view = (ImageButton)findViewById(R.id.playButton);
+            view.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_pause));
+            view.invalidate();
+        } else if (state.equals("play")) {
+            ImageButton view = (ImageButton)findViewById(R.id.playButton);
+            view.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_play));
+            view.invalidate();
+        }
+    }
+
+    public void setImage(int i) {
+        ImageView view = (ImageView)findViewById(R.id.imageView);
+        view.setImageDrawable(getResources().getDrawable(images[i]));
         view.invalidate();
     }
 
     public void setSong(int i) {
+        String url = channelSongs[i];
+        if (url.equals("None")) {
+            TextView textView = (TextView)findViewById(R.id.channelSong);
+            textView.setText("Yle Puhe");
+        } else {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        response.getJSONArray("items").getJSONObject(0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                   @Override
+                   public void onErrorResponse(VolleyError error) {
+                       System.out.println("Error when trying to request");
+                    }
 
+            });
+        }
     }
 
     public int checkChannel(String channel) {
@@ -114,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
         String url = channels[index];
         uri = Uri.parse(url);
+        PLAYING = true;
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                 Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
         MediaSource audioSource = null;
@@ -137,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
         }
         player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
         String url = channels[index];
-        this.setText(index);
+        this.setImage(index);
+        changeButton("stop");
         uri = Uri.parse(url);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                 Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
@@ -155,7 +211,6 @@ public class MainActivity extends AppCompatActivity {
         if (player != null) {
             player.release();
         }
-        player.release();
         if (index == 0) {
             index = channels.length - 1;
         } else {
@@ -163,8 +218,9 @@ public class MainActivity extends AppCompatActivity {
         }
         player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
         String url = channels[index];
-        this.setText(index);
+        this.setImage(index);
         uri = Uri.parse(url);
+        changeButton("stop");
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                 Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
         MediaSource audioSource = null;
@@ -183,14 +239,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
-        openFragment(PlayerFragment.newInstance(channelNames[index]));
+        openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override public boolean onNavigationItemSelected(@NonNull MenuItem Item) {
                     if (Item.getItemId() == R.id.navigation_player) {
-                        openFragment(PlayerFragment.newInstance(channelNames[index]));
+                        openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
                         return true;
                     } else if (Item.getItemId() == R.id.navigation_channels) {
                         openFragment(ChannelFragment.newInstance());

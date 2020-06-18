@@ -15,14 +15,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public TextView textView;
         public MyViewHolder(View tv) {
             super(tv);
-            /*
-            tv.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
-                   System.out.println("Adapter" + getAdapterPosition() + " clicked.");
-               }
-            });*/
-
             textView = (TextView) tv.findViewById(R.id.textView);
         }
     }
