@@ -3,10 +3,12 @@ package com.example.androidradio;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -27,8 +31,11 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
     SimpleExoPlayer player = null;
@@ -50,10 +57,10 @@ public class MainActivity extends AppCompatActivity {
             "https://nrj.fi/webplayer/json/energy.json",
             "https://www.iskelma.fi/feed/onair",
             "None",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=57&next_token=&limit=20",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=52&next_token=&limit=20",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=53&next_token=&limit=20",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=58&next_token=&limit=20"
+            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=57&next_token=&limit=1",
+            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=52&next_token=&limit=1",
+            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=53&next_token=&limit=1",
+            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=58&next_token=&limit=1"
     };
     BottomNavigationView bottomNavigationView;
     String[] channelNames = {"YLEX", "RADIO NOVA", "SUOMI-ROCK", "NRJ", "ISKELMÄ", "PUHE", "RADIO HELMI", "RADIO ROCK", "SUOMI-POP", "AITO-ISKELMÄ"};
@@ -61,12 +68,29 @@ public class MainActivity extends AppCompatActivity {
     Uri uri = null;
     int index = 0;
     public static boolean PLAYING = false;
+    public static String song;
+    public static String song_artist;
+    Handler handler = new Handler();
+
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            setSong(index);
+            handler.postDelayed(this, 5000);
+        }
+    };
 
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void setFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+
     }
 
     public void play(View v) {
@@ -76,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             uri = Uri.parse(url);
             changeButton("stop");
             setImage(index);
+            setSong(index);
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                     Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
             MediaSource audioSource = null;
@@ -86,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             }
             player.prepare(audioSource);
             player.setPlayWhenReady(true);
+            PLAYING  = true;
         } else {
             changeButton("play");
             PLAYING = false;
@@ -126,17 +152,132 @@ public class MainActivity extends AppCompatActivity {
         view.invalidate();
     }
 
+    public void initSong(int i) {
+        String url = channelSongs[i];
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+                    if (response.optJSONArray("items") != null) {
+                        System.out.println("JSON-ARRAY");
+                    } else if (response.optJSONObject("data") != null) {
+                        System.out.println("JSON-OBJECT");
+                    }
+
+                    Iterator<String> rep = response.keys();
+                    String key = null;
+                    while(rep.hasNext()) {
+                        key = rep.next();
+
+                        if (response.optJSONObject(key) != null) {
+                            if (response.getJSONObject(key).has("title")) {
+                                song = response.getJSONObject(key).getString("title");
+                                if (response.getJSONObject(key).has("artist")) {
+                                    song_artist = response.getJSONObject(key).getString("artist");
+                                } else if (response.getJSONObject(key).has("performer")) {
+                                    song_artist = response.getJSONObject(key).getString("performer");
+                            }
+                                break;
+                            } else if (response.getJSONObject(key).has("0")) {
+                                song = response.getJSONObject(key).getJSONObject("0").getString("song");
+                                song_artist = response.getJSONObject(key).getJSONObject("0").getString("artist");
+                            }
+                        } else {
+                            JSONObject ob = (JSONObject)response.getJSONArray("items").get(0);
+                            if (ob.has("song")) {
+                                song = ob.getString("song");
+                                song_artist = ob.getString("artist");
+                            }
+                        }
+
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error when trying to request");
+            }
+
+        });
+
+        queue.add(jsonObjectRequest);
+    }
+
     public void setSong(int i) {
         String url = channelSongs[i];
+        System.out.println(url);
         if (url.equals("None")) {
             TextView textView = (TextView)findViewById(R.id.channelSong);
             textView.setText("Yle Puhe");
+            textView.invalidate();
+            TextView artist = (TextView)findViewById(R.id.channelArtist);
+            artist.setText("Puhe");
+            song = "Yle Puhe";
+            song_artist = "Puhe";
+            artist.invalidate();
         } else {
+            RequestQueue queue = Volley.newRequestQueue(this);
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        response.getJSONArray("items").getJSONObject(0);
+                        TextView textView = (TextView)findViewById(R.id.channelSong);
+                        TextView artist = (TextView)findViewById(R.id.channelArtist);
+
+                        if (response.optJSONArray("items") != null) {
+                            System.out.println("JSON-ARRAY");
+                        } else if (response.optJSONObject("data") != null) {
+                            System.out.println("JSON-OBJECT");
+                        }
+
+                        Iterator<String> rep = response.keys();
+                        String key = null;
+                        while(rep.hasNext()) {
+                            key = rep.next();
+
+                            if (response.optJSONObject(key) != null) {
+                                if (response.getJSONObject(key).has("title")) {
+                                    song = response.getJSONObject(key).getString("title");
+                                    textView.setText(song);
+                                    textView.invalidate();
+                                    if (response.getJSONObject(key).has("artist")) {
+                                        song_artist = response.getJSONObject(key).getString("artist");
+                                        artist.setText(song_artist);
+                                        artist.invalidate();
+                                    } else if (response.getJSONObject(key).has("performer")) {
+                                        song_artist = response.getJSONObject(key).getString("performer");
+                                        artist.setText(song_artist);
+                                        artist.invalidate();
+                                    }
+                                    break;
+                                } else if (response.getJSONObject(key).has("0")) {
+                                    song = response.getJSONObject(key).getJSONObject("0").getString("song");
+                                    textView.setText(song);
+                                    song_artist = response.getJSONObject(key).getJSONObject("0").getString("artist");
+                                    artist.setText(song_artist);
+                                    artist.invalidate();
+                                    textView.invalidate();
+                                }
+                            } else {
+                                JSONObject ob = (JSONObject)response.getJSONArray("items").get(0);
+                                if (ob.has("song")) {
+                                    song = ob.getString("song");
+                                    song_artist = ob.getString("artist");
+                                    textView.setText(song);
+                                    artist.setText(song_artist);
+                                    textView.invalidate();
+                                    artist.invalidate();
+                                }
+                            }
+
+
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -148,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
             });
+
+            queue.add(jsonObjectRequest);
         }
     }
 
@@ -193,6 +336,7 @@ public class MainActivity extends AppCompatActivity {
         player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
         String url = channels[index];
         this.setImage(index);
+        this.setSong(index);
         changeButton("stop");
         uri = Uri.parse(url);
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
@@ -219,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
         player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
         String url = channels[index];
         this.setImage(index);
+        this.setSong(index);
         uri = Uri.parse(url);
         changeButton("stop");
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
@@ -240,6 +385,8 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
+        initSong(index);
+        setFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
@@ -247,12 +394,15 @@ public class MainActivity extends AppCompatActivity {
                 @Override public boolean onNavigationItemSelected(@NonNull MenuItem Item) {
                     if (Item.getItemId() == R.id.navigation_player) {
                         openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
+                        handler.post(runnableCode);
                         return true;
                     } else if (Item.getItemId() == R.id.navigation_channels) {
                         openFragment(ChannelFragment.newInstance());
+                        handler.removeCallbacks(runnableCode);
                         return true;
                     } else if (Item.getItemId() == R.id.navigation_settings) {
                         openFragment(SettingsFragment.newInstance());
+                        handler.removeCallbacks(runnableCode);
                         return true;
                     } else {
                         return false;

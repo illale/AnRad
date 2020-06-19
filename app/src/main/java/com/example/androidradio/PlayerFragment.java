@@ -19,18 +19,20 @@ import androidx.fragment.app.Fragment;
 
 
 public class PlayerFragment extends Fragment {
-    public static String name;
+    public static String song;
+    //public static String artist;
     public static int image;
     public PlayerFragment() {
 
     }
 
-    public static PlayerFragment newInstance(String channel, int image_id) {
+    public static PlayerFragment newInstance(String channelSong, int image_id) {
         Bundle args = new Bundle();
         PlayerFragment fragment = new PlayerFragment();
         fragment.setArguments(args);
-        name = channel;
+        song = channelSong;
         image = image_id;
+        //artist = channelArtist;
         return fragment;
     }
 
@@ -46,10 +48,14 @@ public class PlayerFragment extends Fragment {
         ImageView imageView = (ImageView)view.findViewById(R.id.imageView);
         imageView.setImageDrawable(getResources().getDrawable(image));
         imageView.invalidate();
-        TextView textView = (TextView)view.findViewById(R.id.textView2);
+        TextView textView = (TextView)view.findViewById(R.id.channelSong);
         textView.setHorizontallyScrolling(true);
         textView.setSelected(true);
+        textView.setText(MainActivity.song);
         textView.invalidate();
+        TextView artistText = (TextView)view.findViewById(R.id.channelArtist);
+        artistText.setText(MainActivity.song_artist);
+        artistText.invalidate();
         ImageButton button = (ImageButton)view.findViewById(R.id.playButton);
         if (MainActivity.PLAYING) {
             button.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_pause));
