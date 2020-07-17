@@ -23,9 +23,7 @@ public class ChannelFragment extends Fragment {
     }
 
     public static ChannelFragment newInstance() {
-
         Bundle args = new Bundle();
-
         ChannelFragment fragment = new ChannelFragment();
         fragment.setArguments(args);
         return fragment;

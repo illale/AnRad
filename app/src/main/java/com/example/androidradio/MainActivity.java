@@ -5,6 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,14 +40,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     SimpleExoPlayer player = null;
     String[] channels = {"https://yleuni-f.akamaihd.net/i/yleliveradiohd_2@113879/index_64_a-p.m3u8?sd=10&rebase=on",
             "https://stream.bauermedia.fi/radionova/radionova_64.aac",
             "https://stream.bauermedia.fi/suomirock/suomirock_64.aac",
-            "https://cdn.nrjaudio.fm/adwz1/fi/35001/mp3_128.mp3",
+            "https://stream.bauermedia.fi/nrj/nrj_64.aac",
             "https://stream.bauermedia.fi/iskelma/iskelma_64.aac",
             "https://yleuni-f.akamaihd.net/i/yleliveradiohd_5@113882/index_128_a-p.m3u8?sd=10&rebase=on",
             "https://digitacdn.akamaized.net/hls/live/629243/radiohelmi/master-128000.m3u8",
@@ -70,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
     public static boolean PLAYING = false;
     public static String song;
     public static String song_artist;
+    public static String song_start;
+    public static String song_stop;
+    private String channel_name;
+    private ChannelViewModel viewModel;
+    private List<Channel> chans;
     Handler handler = new Handler();
 
     private Runnable runnableCode = new Runnable() {
@@ -79,6 +91,32 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(this, 5000);
         }
     };
+
+    public void printChannelUrls() {
+        for (Channel chan: chans) {
+            System.out.println("Channel: " + chan.getChannelName() + " URL: " + chan.getChannelAudioUrl());
+        }
+    }
+
+    public String getAudioUrl(int id) {
+        LiveData<Channel> channel = viewModel.getChannelById(id);
+        return channel.getValue().getChannelAudioUrl();
+    }
+
+    public String getSongUrl(int id) {
+        LiveData<Channel> channel = viewModel.getChannelById(id);
+        return channel.getValue().getChannelSongUrl();
+    }
+
+    public int getImageID(int id) {
+        LiveData<Channel> channel = viewModel.getChannelById(id);
+        return channel.getValue().getChannelImageId();
+    }
+
+    public void printChannelName(int id) {
+        LiveData<Channel> channel = viewModel.getChannelById(id);
+        System.out.println("!!!Playing " + channel_name);
+    }
 
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -93,54 +131,78 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void play(View v) {
-        if (player == null) {
-            player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
-            String url = channels[index];
-            uri = Uri.parse(url);
-            changeButton("stop");
-            setImage(index);
-            setSong(index);
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
-                    Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
-            MediaSource audioSource = null;
-            if (url.contains(".m3u8")) {
-                audioSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-            } else {
-                audioSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-            }
-            player.prepare(audioSource);
-            player.setPlayWhenReady(true);
-            PLAYING  = true;
+    public MediaSource getAudioSource(int channel_index, DataSource.Factory factory, Uri address) {
+        /*
+        Check if requested channel url contains .m3u8. If it contains, return HlsMediaSource object,
+        which is used for playing HLS streams. If it does not contain, return ProgressiveMediaSource
+        object which is used for playing continuous audio file streams, which are not sent to endusers
+        with playlist files of small files.
+        */
+        if (channels[channel_index].contains(".m3u8")) {
+            return new HlsMediaSource.Factory(factory).createMediaSource(address);
         } else {
-            changeButton("play");
+            return new ProgressiveMediaSource.Factory(factory).createMediaSource(address);
+        }
+    }
+
+    public void initPlayback() {
+        /*
+        Create new instance of SimpleExoPlayer using
+         */
+        player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
+
+        //Create uri from given url
+        uri = Uri.parse(channels[index]);
+
+        /*
+        Create new DataSourceFactory, which creates new DataSource objects. DataSource is an object
+        where incoming data can be read. While DefaultDataSourceFactory can be used for many types of
+        streams, in this context it is used only to read data from streams that are distributed online
+        */
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
+                Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
+        MediaSource audioSource = getAudioSource(index, dataSourceFactory, uri);
+
+        //Inject MediaSource into SimpleExoPlayer.
+        player.prepare(audioSource);
+        //Start playback when SimpleExoPLayer is ready for it.
+        player.setPlayWhenReady(true);
+        printChannelUrls();
+    }
+
+    public void play(View v) {
+        /*
+        If player object has not been created, create one with selected channel, else
+        if player object already exists, release it to stop playback, and change button state
+        to play.
+        */
+        if (player == null) {
+            initPlayback();
+            PLAYING = true;
+            changeButton();
+            this.setImage(index);
+            this.setSong(index);
+        } else {
             PLAYING = false;
-            player.release();
-            player = null;
+            changeButton();
+            releasePlayer();
             Log.println(Log.INFO, "D", "Player already setup");
         }
     }
 
-    public void stop(View v) {
-        //Currently this is not used, but it should be used when pausing instead of release,
-        //if I am correct, the player doesnt have to initialize after stoping, but will have to after
-        //releasing the player. Confirm from the docs and chage the behaviour of play function if needed.
-        //NOTE: clear the player intialization part to single method, and let play, nextUri and previousUri call it.
-        player.stop();
-    }
-
-    public void releasePlayer(View v) {
+    public void releasePlayer() {
+        //Release player to stop playback, and set player variable to null
         player.release();
         player = null;
     }
 
-    public void changeButton(String state) {
-        if (state.equals("stop")) {
-            ImageButton view = (ImageButton)findViewById(R.id.playButton);
+    public void changeButton() {
+        //Depending on the state of playback, change middle button to "play" or "stop"
+        ImageButton view = findViewById(R.id.playButton);
+        if (PLAYING) {
             view.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_pause));
             view.invalidate();
-        } else if (state.equals("play")) {
-            ImageButton view = (ImageButton)findViewById(R.id.playButton);
+        } else {
             view.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_play));
             view.invalidate();
         }
@@ -152,6 +214,42 @@ public class MainActivity extends AppCompatActivity {
         view.invalidate();
     }
 
+    // ##HOX## initSong and setSong are almost same, rewrite them to make single method.
+
+    public void parseJsonObject(JSONObject responseObj) throws JSONException {
+        //Finds all values in given
+        Iterator<String> keys = responseObj.keys();
+        JSONObject valueObj = null;
+        while(keys.hasNext()) {
+            String key = keys.next();
+            JSONObject obj = responseObj.getJSONObject(key);
+            if (obj != null) {
+                if (obj.has("title")) {
+                    song = obj.getString("title");
+                    song_artist = obj.has("artist") ? obj.getString("artist") : obj.getString("performer");
+                    song_start = obj.has("artist") ? obj.getString("playtime") : obj.getString("startTime");
+                    break;
+                } else if (obj.has("0")) {
+                    song = obj.getJSONObject("0").getString("song");
+                    song_artist = obj.getJSONObject("0").getString("artist");
+                    long time = obj.getJSONObject("0").getLong("timestamp");
+                    song_start = Long.toString(time);
+                }
+            } else {
+                JSONObject ob = (JSONObject)responseObj.getJSONArray("items").get(0);
+                if (ob.has("song")) {
+                    song = ob.getString("song");
+                    song_artist = ob.getString("artist");
+                    song_start = ob.getString("start_time");
+                }
+            }
+        }
+    }
+
+    public void parseJsonArray(JSONArray response_obj) {
+
+    }
+
     public void initSong(int i) {
         String url = channelSongs[i];
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -160,29 +258,19 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
 
-                    if (response.optJSONArray("items") != null) {
-                        System.out.println("JSON-ARRAY");
-                    } else if (response.optJSONObject("data") != null) {
-                        System.out.println("JSON-OBJECT");
-                    }
-
                     Iterator<String> rep = response.keys();
                     String key = null;
                     while(rep.hasNext()) {
                         key = rep.next();
-
+                        JSONObject obj = response.getJSONObject(key);
                         if (response.optJSONObject(key) != null) {
-                            if (response.getJSONObject(key).has("title")) {
-                                song = response.getJSONObject(key).getString("title");
-                                if (response.getJSONObject(key).has("artist")) {
-                                    song_artist = response.getJSONObject(key).getString("artist");
-                                } else if (response.getJSONObject(key).has("performer")) {
-                                    song_artist = response.getJSONObject(key).getString("performer");
-                            }
+                            if (obj.has("title")) {
+                                song = obj.getString("title");
+                                song_artist = obj.has("artist") ? obj.getString("artist") : obj.getString("performer");
                                 break;
-                            } else if (response.getJSONObject(key).has("0")) {
-                                song = response.getJSONObject(key).getJSONObject("0").getString("song");
-                                song_artist = response.getJSONObject(key).getJSONObject("0").getString("artist");
+                            } else if (obj.has("0")) {
+                                song = obj.getJSONObject("0").getString("song");
+                                song_artist = obj.getJSONObject("0").getString("artist");
                             }
                         } else {
                             JSONObject ob = (JSONObject)response.getJSONArray("items").get(0);
@@ -191,8 +279,6 @@ public class MainActivity extends AppCompatActivity {
                                 song_artist = ob.getString("artist");
                             }
                         }
-
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -244,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
                             if (response.optJSONObject(key) != null) {
                                 if (response.getJSONObject(key).has("title")) {
                                     song = response.getJSONObject(key).getString("title");
+                                    System.out.println(song);
                                     textView.setText(song);
                                     textView.invalidate();
                                     if (response.getJSONObject(key).has("artist")) {
@@ -295,6 +382,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int checkChannel(String channel) {
+        //Finds and returns the index of given channel
+        //NOTE: should be changed, when ROOM is used
         for (int i = 0; i <= channelNames.length; i++) {
             if (channelNames[i].equals(channel)) {
                 return i;
@@ -304,84 +393,83 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setUri(View v) {
+        /*
+        This method is used only when selecting channel from recyclerview list
+        */
+
+        //Check if player instance exists, and release it if it does.
         if (player != null) {
             player.release();
         }
+
+        //Get the index of chosen channel, that previous and next channels can be chosen correctly
         index = checkChannel(((TextView)v).getText().toString());
-        player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
-        String url = channels[index];
-        uri = Uri.parse(url);
-        PLAYING = true;
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
-                Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
-        MediaSource audioSource = null;
-        if (url.contains(".m3u8")) {
-            audioSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        } else {
-            audioSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        }
-        player.prepare(audioSource);
-        player.setPlayWhenReady(true);
+        //Initialize playback of a new channel
+        initPlayback();
     }
 
     public void nextUri(View v) {
+        /*
+        Used for starting playback of a next channel in channels list
+        */
+
+        //Check that player object does not exist, and if it does release it.
         if (player != null) {
-            player.release();
+            releasePlayer();
         }
+
+        //Check that index doesn't become greater than the length of the channels list, and if it does
+        //set index to zero
         if (index == channels.length - 1) {
             index = 0;
         } else {
             index++;
         }
-        player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
-        String url = channels[index];
+
+        //Initialize playback of a new channel
+        initPlayback();
         this.setImage(index);
         this.setSong(index);
-        changeButton("stop");
-        uri = Uri.parse(url);
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
-                Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
-        MediaSource audioSource = null;
-        if (url.contains(".m3u8")) {
-            audioSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        } else {
-            audioSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        }
-        player.prepare(audioSource);
-        player.setPlayWhenReady(true);
     }
 
     public void previousUri(View v) {
+        /*
+        Used for starting playback of the previous channel from channels list
+         */
+
+        //If the player instance exists, release it, so that two medias aren't being played at the
+        //same time
         if (player != null) {
-            player.release();
+            releasePlayer();
         }
+
+        //Check that index doesn't become smaller than zero.
         if (index == 0) {
             index = channels.length - 1;
         } else {
             index--;
         }
-        player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
-        String url = channels[index];
+
+        //Initialize playback of a new channel
+        initPlayback();
         this.setImage(index);
         this.setSong(index);
-        uri = Uri.parse(url);
-        changeButton("stop");
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
-                Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
-        MediaSource audioSource = null;
-        if (url.contains(".m3u8")) {
-            audioSource = new HlsMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        } else {
-            audioSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-        }
-        player.prepare(audioSource);
-        player.setPlayWhenReady(true);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        viewModel.getAllChannels().observe(this, new Observer<List<Channel>>() {
+                    @Override
+                    public void onChanged(List<Channel> channels) {
+                        chans = channels;
+                        for (Channel chn: channels) {
+                            System.out.println(chn.getChannelName());
+                        }
+                    }
+                });
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
