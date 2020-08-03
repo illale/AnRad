@@ -15,9 +15,7 @@ import java.util.concurrent.Executors;
 @Database(entities =  {Channel.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-
     public abstract ChannelDao channelsDao();
-
     private static final String DATABASE_NAME = "channels.db";
     private static AppDatabase INSTANCE;
 

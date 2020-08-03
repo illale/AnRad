@@ -39,12 +39,11 @@ public class ChannelFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_channels, container, false);
         FragmentActivity ct = getActivity();
-        channels = getResources().getStringArray(R.array.channel_names);
-        recyclerView = (RecyclerView)view.findViewById(R.id.recycler);
-        //recyclerView.setHasFixedSize(true);
+        channels = MainActivity.chan_names;
+        recyclerView = view.findViewById(R.id.recycler);
         manager = new LinearLayoutManager(ct);
         recyclerView.setLayoutManager(manager);
-        adapter = new MyAdapter(channels);
+        adapter = new MyAdapter(channels, R.layout.my_text_view);
         recyclerView.setAdapter(adapter);
 
         return view;
