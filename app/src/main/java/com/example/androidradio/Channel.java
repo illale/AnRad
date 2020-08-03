@@ -7,7 +7,6 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Channel {
     //Crete structure of the Channel table in room database
-
     @PrimaryKey(autoGenerate = true) private int id;
 
     @ColumnInfo (name = "channel_name")
@@ -31,6 +30,7 @@ public class Channel {
         this.channelImageId = channelImageId;
     }
 
+    //Getters and setters
     public void setChannelName(String name) {
         this.channelName = name;
     }

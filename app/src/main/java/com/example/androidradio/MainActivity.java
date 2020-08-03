@@ -1,17 +1,18 @@
 package com.example.androidradio;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -40,35 +41,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     SimpleExoPlayer player = null;
-    String[] channels = {"https://yleuni-f.akamaihd.net/i/yleliveradiohd_2@113879/index_64_a-p.m3u8?sd=10&rebase=on",
-            "https://stream.bauermedia.fi/radionova/radionova_64.aac",
-            "https://stream.bauermedia.fi/suomirock/suomirock_64.aac",
-            "https://stream.bauermedia.fi/nrj/nrj_64.aac",
-            "https://stream.bauermedia.fi/iskelma/iskelma_64.aac",
-            "https://yleuni-f.akamaihd.net/i/yleliveradiohd_5@113882/index_128_a-p.m3u8?sd=10&rebase=on",
-            "https://digitacdn.akamaized.net/hls/live/629243/radiohelmi/master-128000.m3u8",
-            "https://digitacdn.akamaized.net/hls/live/629243/radiorock/master.m3u8",
-            "https://digitacdn.akamaized.net/hls/live/629243/radiosuomipop/master-128000.m3u8",
-            "https://supla.digitacdn.net/live/_definst_/supla/aitoiskelma/playlist.m3u8"
-    };
-
-    String[] channelSongs = {"https://areena.api.yle.fi/v1/songs/current.json?app_id=areena_web_personal_prod&app_key=6c64d890124735033c50099ca25dd2fe&client=yle-areena-web&language=fi&v=7&serviceId=ylex",
-            "https://www.radionova.fi/feed/onair",
-            "https://www.radiosuomirock.fi/feed/onair",
-            "https://nrj.fi/webplayer/json/energy.json",
-            "https://www.iskelma.fi/feed/onair",
-            "None",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=57&next_token=&limit=1",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=52&next_token=&limit=1",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=53&next_token=&limit=1",
-            "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=58&next_token=&limit=1"
-    };
     BottomNavigationView bottomNavigationView;
     String[] channelNames = {"YLEX", "RADIO NOVA", "SUOMI-ROCK", "NRJ", "ISKELMÄ", "PUHE", "RADIO HELMI", "RADIO ROCK", "SUOMI-POP", "AITO-ISKELMÄ"};
     int[] images = {R.drawable.ylex, R.drawable.radionova, R.drawable.suomirock, R.drawable.nrj, R.drawable.iskelma_valt, R.drawable.yle_puhe, R.drawable.helmiradio, R.drawable.radio_rock, R.drawable.radio_suomipop, R.drawable.aito_iskelma};
@@ -82,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     private String channel_name;
     private ChannelViewModel viewModel;
     private List<Channel> chans;
+    public static String[] chan_names;
+    private SharedPreferences shPref;
+    public static String[] pref;
     Handler handler = new Handler();
 
     private Runnable runnableCode = new Runnable() {
@@ -92,30 +74,41 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void printChannelUrls() {
-        for (Channel chan: chans) {
-            System.out.println("Channel: " + chan.getChannelName() + " URL: " + chan.getChannelAudioUrl());
-        }
+    public static String[] getAllSettings() {
+        return pref;
     }
 
-    public String getAudioUrl(int id) {
-        LiveData<Channel> channel = viewModel.getChannelById(id);
-        return channel.getValue().getChannelAudioUrl();
+    public void createSettings() {
+        Context context = getApplicationContext();
+        shPref = context.getSharedPreferences("Pref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = shPref.edit();
+        editor.putBoolean("SHOW_SONGS", true);
+        editor.putBoolean("ENABLE_VISUALIZATION", false);
+        editor.apply();
     }
 
-    public String getSongUrl(int id) {
-        LiveData<Channel> channel = viewModel.getChannelById(id);
-        return channel.getValue().getChannelSongUrl();
+    public void listSettings() {
+        Context context = getApplicationContext();
+        Map<String, ?> values = shPref.getAll();
+        List<String> keys = new ArrayList<>(values.keySet());
+        pref = new String[keys.size()];
+        keys.toArray(pref);
     }
 
-    public int getImageID(int id) {
-        LiveData<Channel> channel = viewModel.getChannelById(id);
-        return channel.getValue().getChannelImageId();
+    public void printCurrentChannel(int id) {
+        System.out.println("Current channel = " + chans.get(id).getChannelName());
     }
 
-    public void printChannelName(int id) {
-        LiveData<Channel> channel = viewModel.getChannelById(id);
-        System.out.println("!!!Playing " + channel_name);
+    public String getChannelAudioUrl(int id) {
+        return chans.get(id).getChannelAudioUrl();
+    }
+
+    public String getChannelSongUrl(int id) {
+        return chans.get(id).getChannelSongUrl();
+    }
+
+    public int getChannelImageId(int id) {
+        return chans.get(id).getChannelImageId();
     }
 
     public void openFragment(Fragment fragment) {
@@ -131,28 +124,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public MediaSource getAudioSource(int channel_index, DataSource.Factory factory, Uri address) {
+    public MediaSource getAudioSource(int channel_index, DataSource.Factory factory, Uri address, String audioUrl) {
         /*
         Check if requested channel url contains .m3u8. If it contains, return HlsMediaSource object,
         which is used for playing HLS streams. If it does not contain, return ProgressiveMediaSource
         object which is used for playing continuous audio file streams, which are not sent to endusers
         with playlist files of small files.
         */
-        if (channels[channel_index].contains(".m3u8")) {
+        if (audioUrl.contains(".m3u8")) {
             return new HlsMediaSource.Factory(factory).createMediaSource(address);
         } else {
             return new ProgressiveMediaSource.Factory(factory).createMediaSource(address);
         }
     }
 
-    public void initPlayback() {
+    public void initPlayback(String audioUrl) {
         /*
         Create new instance of SimpleExoPlayer using
          */
         player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
 
         //Create uri from given url
-        uri = Uri.parse(channels[index]);
+        uri = Uri.parse(audioUrl);
 
         /*
         Create new DataSourceFactory, which creates new DataSource objects. DataSource is an object
@@ -161,13 +154,12 @@ public class MainActivity extends AppCompatActivity {
         */
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                 Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
-        MediaSource audioSource = getAudioSource(index, dataSourceFactory, uri);
+        MediaSource audioSource = getAudioSource(index, dataSourceFactory, uri, audioUrl);
 
         //Inject MediaSource into SimpleExoPlayer.
         player.prepare(audioSource);
         //Start playback when SimpleExoPLayer is ready for it.
         player.setPlayWhenReady(true);
-        printChannelUrls();
     }
 
     public void play(View v) {
@@ -177,9 +169,11 @@ public class MainActivity extends AppCompatActivity {
         to play.
         */
         if (player == null) {
-            initPlayback();
+            String url = getChannelAudioUrl(index);
+            initPlayback(url);
             PLAYING = true;
             changeButton();
+            printCurrentChannel(index);
             this.setImage(index);
             this.setSong(index);
         } else {
@@ -251,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initSong(int i) {
-        String url = channelSongs[i];
+        String url = getChannelSongUrl(i);
         RequestQueue queue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -296,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setSong(int i) {
-        String url = channelSongs[i];
+        String url = getChannelSongUrl(i);
         System.out.println(url);
         if (url.equals("None")) {
             TextView textView = (TextView)findViewById(R.id.channelSong);
@@ -404,8 +398,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Get the index of chosen channel, that previous and next channels can be chosen correctly
         index = checkChannel(((TextView)v).getText().toString());
+        String url = getChannelAudioUrl(index);
         //Initialize playback of a new channel
-        initPlayback();
+        initPlayback(url);
     }
 
     public void nextUri(View v) {
@@ -420,14 +415,14 @@ public class MainActivity extends AppCompatActivity {
 
         //Check that index doesn't become greater than the length of the channels list, and if it does
         //set index to zero
-        if (index == channels.length - 1) {
+        if (index == chans.size() - 1) {
             index = 0;
         } else {
             index++;
         }
-
+        String url = getChannelAudioUrl(index);
         //Initialize playback of a new channel
-        initPlayback();
+        initPlayback(url);
         this.setImage(index);
         this.setSong(index);
     }
@@ -445,13 +440,13 @@ public class MainActivity extends AppCompatActivity {
 
         //Check that index doesn't become smaller than zero.
         if (index == 0) {
-            index = channels.length - 1;
+            index = chans.size() - 1;
         } else {
             index--;
         }
-
+        String url = getChannelAudioUrl(index);
         //Initialize playback of a new channel
-        initPlayback();
+        initPlayback(url);
         this.setImage(index);
         this.setSong(index);
     }
@@ -462,18 +457,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.getAllChannels().observe(this, new Observer<List<Channel>>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
                     public void onChanged(List<Channel> channels) {
                         chans = channels;
+                        List<String> temp_chans = new ArrayList<>();
                         for (Channel chn: channels) {
                             System.out.println(chn.getChannelName());
+                            temp_chans.add(chn.getChannelName());
                         }
+                        temp_chans.sort(String::compareToIgnoreCase);
+                        chan_names = new String[ temp_chans.size()];
+                        temp_chans.toArray(chan_names);
+
                     }
                 });
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
-        initSong(index);
+        //initSong(index);
+        createSettings();
+        listSettings();
         setFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
     }
 

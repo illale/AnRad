@@ -10,23 +10,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private String[] data;
+    private int LayoutId;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView textView;
         public MyViewHolder(View tv) {
             super(tv);
-            textView = (TextView) tv.findViewById(R.id.textView);
+            textView = tv.findViewById(R.id.textView);
         }
     }
 
-    public MyAdapter(String[] list) {
+    public MyAdapter(String[] list, int layout) {
         data = list;
+        this.LayoutId = layout;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         System.out.println(data.length);
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_text_view, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(LayoutId, parent, false);
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
     }

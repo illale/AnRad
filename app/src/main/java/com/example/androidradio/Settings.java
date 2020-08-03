@@ -6,11 +6,17 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Settings {
-    @PrimaryKey int setting_id;
+    @PrimaryKey(autoGenerate = true) private int setting_id;
 
     @ColumnInfo(name = "setting_description")
     public String settingDesc;
 
     @ColumnInfo(name = "setting_value")
     public boolean settingValue;
+
+    public Settings(String desc, boolean value) {
+        this.settingDesc = desc;
+        this.settingValue = value;
+    }
+
 }
