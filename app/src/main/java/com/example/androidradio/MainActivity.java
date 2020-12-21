@@ -69,8 +69,12 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            setSong(index);
-            handler.postDelayed(this, 5000);
+            if ((TextView)findViewById(R.id.channelSong) == null) {
+                System.out.println("Bug maybe destroyed???");
+            } else {
+                setSong(index);
+                handler.postDelayed(this, 5000);
+            }
         }
     };
 
@@ -308,6 +312,11 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(JSONObject response) {
                     try {
                         TextView textView = (TextView)findViewById(R.id.channelSong);
+
+                        if (textView == null) {
+                            System.out.println("Null");
+                        }
+
                         TextView artist = (TextView)findViewById(R.id.channelArtist);
 
                         if (response.optJSONArray("items") != null) {
@@ -324,26 +333,25 @@ public class MainActivity extends AppCompatActivity {
                             if (response.optJSONObject(key) != null) {
                                 if (response.getJSONObject(key).has("title")) {
                                     song = response.getJSONObject(key).getString("title");
-                                    System.out.println(song);
+
                                     textView.setText(song);
                                     textView.invalidate();
                                     if (response.getJSONObject(key).has("artist")) {
                                         song_artist = response.getJSONObject(key).getString("artist");
-                                        artist.setText(song_artist);
-                                        artist.invalidate();
                                     } else if (response.getJSONObject(key).has("performer")) {
                                         song_artist = response.getJSONObject(key).getString("performer");
-                                        artist.setText(song_artist);
-                                        artist.invalidate();
                                     }
+                                    artist.setText(song_artist);
+                                    artist.invalidate();
                                     break;
                                 } else if (response.getJSONObject(key).has("0")) {
                                     song = response.getJSONObject(key).getJSONObject("0").getString("song");
-                                    textView.setText(song);
                                     song_artist = response.getJSONObject(key).getJSONObject("0").getString("artist");
+                                    textView.setText(song);
                                     artist.setText(song_artist);
                                     artist.invalidate();
                                     textView.invalidate();
+                                    break;
                                 }
                             } else {
                                 JSONObject ob = (JSONObject)response.getJSONArray("items").get(0);
@@ -499,6 +507,6 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         return false;
                     }
-                };
+                }
             };
 }
