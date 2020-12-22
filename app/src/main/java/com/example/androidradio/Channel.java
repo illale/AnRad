@@ -30,23 +30,6 @@ public class Channel {
         this.channelImageId = channelImageId;
     }
 
-    //Getters and setters
-    public void setChannelName(String name) {
-        this.channelName = name;
-    }
-
-    public void setChannelAudioUrl(String url) {
-        this.channelAudioUrl = url;
-    }
-
-    public void setChannelSongUrl(String url) {
-        this.channelSongUrl = url;
-    }
-
-    public void setChannelImageId(int id) {
-        this.channelImageId = id;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -63,12 +46,10 @@ public class Channel {
         return this.channelSongUrl;
     }
 
-    public int getChannelImageId() {
-        return this.channelImageId;
-    }
-
     public int getId() {
         return this.id;
     }
+
+    public int getChannelImageId() { return this.channelImageId; }
 
 }

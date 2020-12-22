@@ -19,9 +19,5 @@ public class ChannelViewModel extends AndroidViewModel {
         return repo.getAllChannels();
     }
 
-    LiveData<Channel> getChannelById(int id) {
-        return repo.getChannel(id);
-    }
-
-
+    LiveData<List<Channel>> getOrderedChannels() { return repo.getOrderedChannels(); }
 }

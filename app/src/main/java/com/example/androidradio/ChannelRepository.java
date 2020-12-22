@@ -1,10 +1,7 @@
 package com.example.androidradio;
 
 import android.app.Application;
-import android.os.AsyncTask;
-
 import androidx.lifecycle.LiveData;
-
 import java.util.List;
 
 public class ChannelRepository {
@@ -24,21 +21,6 @@ public class ChannelRepository {
         return channelDao.getAll();
     }
 
-    public void insert(Channel chn) {
-        new insertAsyncTask(channelDao).execute(chn);
-    }
+    LiveData<List<Channel>> getOrderedChannels() { return channelDao.getOrdered(); }
 
-    private static class insertAsyncTask extends AsyncTask<Channel, Void, Void> {
-        private ChannelDao channelDao;
-
-        insertAsyncTask(ChannelDao dao) {
-            channelDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final Channel... params) {
-            channelDao.insert(params[0]);
-            return null;
-        }
-    }
 }

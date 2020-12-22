@@ -15,14 +15,8 @@ public interface ChannelDao {
     @Query("SELECT * FROM Channel WHERE id = (:userId)")
     LiveData<Channel> getById(int userId);
 
-    @Query("SELECT * FROM Channel WHERE channel_name LIKE :name")
-    LiveData<Channel> findByName(String name);
-
-    @Query("SELECT channel_name FROM Channel")
-    LiveData<List<String>> getChannelNames();
-
-    @Query("SELECT COUNT(*) FROM Channel")
-    LiveData<Integer> getNumberOfChannels();
+    @Query("SELECT * FROM Channel ORDER BY channel_name")
+    LiveData<List<Channel>> getOrdered();
 
     @Insert
     void insertAll(Channel... channels);

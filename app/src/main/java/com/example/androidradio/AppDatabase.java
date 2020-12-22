@@ -1,15 +1,12 @@
 package com.example.androidradio;
 
 import android.content.Context;
-import android.content.Entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 @Database(entities =  {Channel.class}, version = 1, exportSchema = false)
@@ -34,12 +31,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
-                        Executors.newSingleThreadExecutor().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                getInstance(context).channelsDao().insertAll(ChannelCreator.createChannels());
-                            }
-                        });
+                        Executors.newSingleThreadExecutor().execute(() -> getInstance(context).channelsDao().insertAll(ChannelCreator.createChannels()));
                     }
                 }).build();
     }

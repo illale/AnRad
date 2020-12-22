@@ -14,7 +14,8 @@ public class Settings {
     @ColumnInfo(name = "setting_value")
     public boolean settingValue;
 
-    public Settings(String desc, boolean value) {
+    public Settings(int setting_id, String desc, boolean value) {
+        this.setting_id = setting_id;
         this.settingDesc = desc;
         this.settingValue = value;
     }

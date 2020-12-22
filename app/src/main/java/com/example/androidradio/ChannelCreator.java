@@ -17,9 +17,4 @@ public class ChannelCreator {
         };
     }
 
-    public static Settings[] createSettings() {
-        return new Settings[] {
-            new Settings("GET_SONGS", true)
-        };
-    }
 }

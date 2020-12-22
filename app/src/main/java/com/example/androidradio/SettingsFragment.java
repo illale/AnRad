@@ -1,7 +1,6 @@
 package com.example.androidradio;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class SettingsFragment extends Fragment {
-    String[] channels;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager manager;
 
 
     public SettingsFragment() {
@@ -44,13 +38,13 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         FragmentActivity ct = getActivity();
         String[] pref = MainActivity.getAllSettings();
-        recyclerView = view.findViewById(R.id.setting_recycler);
+        RecyclerView recyclerView = view.findViewById(R.id.setting_recycler);
         for (String pre: pref) {
             System.out.println(pre);
         }
-        manager = new LinearLayoutManager(ct);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(ct);
         recyclerView.setLayoutManager(manager);
-        adapter = new MyAdapter(pref, R.layout.setting_view);
+        RecyclerView.Adapter adapter = new MyAdapter(pref, R.layout.setting_view);
         recyclerView.setAdapter(adapter);
         return view;
     }

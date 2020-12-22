@@ -1,10 +1,10 @@
 package com.example.androidradio;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,11 +13,12 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChannelFragment extends Fragment {
     String[] channels;
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager manager;
+    List<Integer> channel_images;
 
     public ChannelFragment() {
     }
@@ -40,10 +41,15 @@ public class ChannelFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_channels, container, false);
         FragmentActivity ct = getActivity();
         channels = MainActivity.chan_names;
-        recyclerView = view.findViewById(R.id.recycler);
-        manager = new LinearLayoutManager(ct);
+        channel_images = MainActivity.chan_images;
+        RecyclerView recyclerView = view.findViewById(R.id.recycler);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(ct);
         recyclerView.setLayoutManager(manager);
-        adapter = new MyAdapter(channels, R.layout.my_text_view);
+        List<Drawable> d = new ArrayList<>();
+        for (Integer img: channel_images) {
+            d.add(getResources().getDrawable(img));
+        }
+        RecyclerView.Adapter adapter = new MyAdapter(channels, d, R.layout.my_text_view);
         recyclerView.setAdapter(adapter);
 
         return view;

@@ -1,22 +1,19 @@
 package com.example.androidradio;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,8 +21,6 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -37,7 +32,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,12 +50,9 @@ public class MainActivity extends AppCompatActivity {
     public static boolean PLAYING = false;
     public static String song;
     public static String song_artist;
-    public static String song_start;
-    public static String song_stop;
-    private String channel_name;
-    private ChannelViewModel viewModel;
     private List<Channel> chans;
     public static String[] chan_names;
+    public static List<Integer> chan_images = new ArrayList<>();
     private SharedPreferences shPref;
     public static String[] pref;
     Handler handler = new Handler();
@@ -69,12 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            if ((TextView)findViewById(R.id.channelSong) == null) {
-                System.out.println("Bug maybe destroyed???");
-            } else {
-                setSong(index);
-                handler.postDelayed(this, 5000);
-            }
+            setSong(index);
+            handler.postDelayed(this, 5000);
         }
     };
 
@@ -92,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void listSettings() {
-        Context context = getApplicationContext();
+        getApplicationContext();
         Map<String, ?> values = shPref.getAll();
         List<String> keys = new ArrayList<>(values.keySet());
         pref = new String[keys.size()];
@@ -111,10 +98,6 @@ public class MainActivity extends AppCompatActivity {
         return chans.get(id).getChannelSongUrl();
     }
 
-    public int getChannelImageId(int id) {
-        return chans.get(id).getChannelImageId();
-    }
-
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
@@ -125,10 +108,9 @@ public class MainActivity extends AppCompatActivity {
     public void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
-
     }
 
-    public MediaSource getAudioSource(int channel_index, DataSource.Factory factory, Uri address, String audioUrl) {
+    public MediaSource getAudioSource(DataSource.Factory factory, Uri address, String audioUrl) {
         /*
         Check if requested channel url contains .m3u8. If it contains, return HlsMediaSource object,
         which is used for playing HLS streams. If it does not contain, return ProgressiveMediaSource
@@ -158,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         */
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                 Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
-        MediaSource audioSource = getAudioSource(index, dataSourceFactory, uri, audioUrl);
+        MediaSource audioSource = getAudioSource(dataSourceFactory, uri, audioUrl);
 
         //Inject MediaSource into SimpleExoPlayer.
         player.prepare(audioSource);
@@ -184,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
             PLAYING = false;
             changeButton();
             releasePlayer();
-            Log.println(Log.INFO, "D", "Player already setup");
         }
     }
 
@@ -199,185 +180,64 @@ public class MainActivity extends AppCompatActivity {
         ImageButton view = findViewById(R.id.playButton);
         if (PLAYING) {
             view.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_pause));
-            view.invalidate();
         } else {
             view.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_play));
-            view.invalidate();
         }
+        view.invalidate();
     }
 
     public void setImage(int i) {
-        ImageView view = (ImageView)findViewById(R.id.imageView);
+        ImageView view = findViewById(R.id.imageView);
         view.setImageDrawable(getResources().getDrawable(images[i]));
         view.invalidate();
     }
 
-    // ##HOX## initSong and setSong are almost same, rewrite them to make single method.
-
-    public void parseJsonObject(JSONObject responseObj) throws JSONException {
-        //Finds all values in given
-        Iterator<String> keys = responseObj.keys();
-        JSONObject valueObj = null;
-        while(keys.hasNext()) {
-            String key = keys.next();
-            JSONObject obj = responseObj.getJSONObject(key);
-            if (obj != null) {
-                if (obj.has("title")) {
-                    song = obj.getString("title");
-                    song_artist = obj.has("artist") ? obj.getString("artist") : obj.getString("performer");
-                    song_start = obj.has("artist") ? obj.getString("playtime") : obj.getString("startTime");
-                    break;
-                } else if (obj.has("0")) {
-                    song = obj.getJSONObject("0").getString("song");
-                    song_artist = obj.getJSONObject("0").getString("artist");
-                    long time = obj.getJSONObject("0").getLong("timestamp");
-                    song_start = Long.toString(time);
-                }
-            } else {
-                JSONObject ob = (JSONObject)responseObj.getJSONArray("items").get(0);
-                if (ob.has("song")) {
-                    song = ob.getString("song");
-                    song_artist = ob.getString("artist");
-                    song_start = ob.getString("start_time");
-                }
-            }
-        }
-    }
-
-    public void parseJsonArray(JSONArray response_obj) {
-
-    }
-
-    public void initSong(int i) {
+    @SuppressLint("SetTextI18n")
+    public void setSong(int i) {
         String url = getChannelSongUrl(i);
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
+
+        if (url.equals("None")) {
+            song = "Yle Puhe";
+            song_artist = "Puhe";
+        } else {
+            RequestQueue queue = Volley.newRequestQueue(this);
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
                 try {
 
                     Iterator<String> rep = response.keys();
-                    String key = null;
+                    String key;
                     while(rep.hasNext()) {
                         key = rep.next();
-                        JSONObject obj = response.getJSONObject(key);
+
                         if (response.optJSONObject(key) != null) {
-                            if (obj.has("title")) {
-                                song = obj.getString("title");
-                                song_artist = obj.has("artist") ? obj.getString("artist") : obj.getString("performer");
+                            if (response.getJSONObject(key).has("title")) {
+                                song = response.getJSONObject(key).getString("title");
+
+                                if (response.getJSONObject(key).has("artist")) {
+                                    song_artist = response.getJSONObject(key).getString("artist");
+                                } else if (response.getJSONObject(key).has("performer")) {
+                                    song_artist = response.getJSONObject(key).getString("performer");
+                                }
                                 break;
-                            } else if (obj.has("0")) {
-                                song = obj.getJSONObject("0").getString("song");
-                                song_artist = obj.getJSONObject("0").getString("artist");
+                            } else if (response.getJSONObject(key).has("0")) {
+                                song = response.getJSONObject(key).getJSONObject("0").getString("song");
+                                song_artist = response.getJSONObject(key).getJSONObject("0").getString("artist");
+
+                                break;
                             }
                         } else {
                             JSONObject ob = (JSONObject)response.getJSONArray("items").get(0);
                             if (ob.has("song")) {
                                 song = ob.getString("song");
                                 song_artist = ob.getString("artist");
+                                break;
                             }
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("Error when trying to request");
-            }
-
-        });
-
-        queue.add(jsonObjectRequest);
-    }
-
-    public void setSong(int i) {
-        String url = getChannelSongUrl(i);
-        System.out.println(url);
-        if (url.equals("None")) {
-            TextView textView = (TextView)findViewById(R.id.channelSong);
-            textView.setText("Yle Puhe");
-            textView.invalidate();
-            TextView artist = (TextView)findViewById(R.id.channelArtist);
-            artist.setText("Puhe");
-            song = "Yle Puhe";
-            song_artist = "Puhe";
-            artist.invalidate();
-        } else {
-            RequestQueue queue = Volley.newRequestQueue(this);
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        TextView textView = (TextView)findViewById(R.id.channelSong);
-
-                        if (textView == null) {
-                            System.out.println("Null");
-                        }
-
-                        TextView artist = (TextView)findViewById(R.id.channelArtist);
-
-                        if (response.optJSONArray("items") != null) {
-                            System.out.println("JSON-ARRAY");
-                        } else if (response.optJSONObject("data") != null) {
-                            System.out.println("JSON-OBJECT");
-                        }
-
-                        Iterator<String> rep = response.keys();
-                        String key = null;
-                        while(rep.hasNext()) {
-                            key = rep.next();
-
-                            if (response.optJSONObject(key) != null) {
-                                if (response.getJSONObject(key).has("title")) {
-                                    song = response.getJSONObject(key).getString("title");
-
-                                    textView.setText(song);
-                                    textView.invalidate();
-                                    if (response.getJSONObject(key).has("artist")) {
-                                        song_artist = response.getJSONObject(key).getString("artist");
-                                    } else if (response.getJSONObject(key).has("performer")) {
-                                        song_artist = response.getJSONObject(key).getString("performer");
-                                    }
-                                    artist.setText(song_artist);
-                                    artist.invalidate();
-                                    break;
-                                } else if (response.getJSONObject(key).has("0")) {
-                                    song = response.getJSONObject(key).getJSONObject("0").getString("song");
-                                    song_artist = response.getJSONObject(key).getJSONObject("0").getString("artist");
-                                    textView.setText(song);
-                                    artist.setText(song_artist);
-                                    artist.invalidate();
-                                    textView.invalidate();
-                                    break;
-                                }
-                            } else {
-                                JSONObject ob = (JSONObject)response.getJSONArray("items").get(0);
-                                if (ob.has("song")) {
-                                    song = ob.getString("song");
-                                    song_artist = ob.getString("artist");
-                                    textView.setText(song);
-                                    artist.setText(song_artist);
-                                    textView.invalidate();
-                                    artist.invalidate();
-                                }
-                            }
-
-
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                   @Override
-                   public void onErrorResponse(VolleyError error) {
-                       System.out.println("Error when trying to request");
-                    }
-
-            });
+            }, error -> System.out.println("JSON REQUEST ERROR"));
 
             queue.add(jsonObjectRequest);
         }
@@ -403,11 +263,11 @@ public class MainActivity extends AppCompatActivity {
         if (player != null) {
             player.release();
         }
-
         //Get the index of chosen channel, that previous and next channels can be chosen correctly
         index = checkChannel(((TextView)v).getText().toString());
         String url = getChannelAudioUrl(index);
         //Initialize playback of a new channel
+        PLAYING = true;
         initPlayback(url);
     }
 
@@ -459,54 +319,52 @@ public class MainActivity extends AppCompatActivity {
         this.setSong(index);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
-        viewModel.getAllChannels().observe(this, new Observer<List<Channel>>() {
-                    @RequiresApi(api = Build.VERSION_CODES.N)
-                    @Override
-                    public void onChanged(List<Channel> channels) {
-                        chans = channels;
-                        List<String> temp_chans = new ArrayList<>();
-                        for (Channel chn: channels) {
-                            System.out.println(chn.getChannelName());
-                            temp_chans.add(chn.getChannelName());
-                        }
-                        temp_chans.sort(String::compareToIgnoreCase);
-                        chan_names = new String[ temp_chans.size()];
-                        temp_chans.toArray(chan_names);
+        ChannelViewModel viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        viewModel.getOrderedChannels().observe(this, channels -> {
+            chans = channels;
+            List<String> temp_chans = new ArrayList<>();
+            List<Integer> temp_ids = new ArrayList<>();
+            for (Channel chn: channels) {
+                System.out.println(chn.getChannelName());
+                System.out.println(chn.getChannelImageId());
+                temp_chans.add(chn.getChannelName());
+                temp_ids.add(chn.getChannelImageId());
+            }
+            chan_names = new String[ temp_chans.size()];
+            temp_chans.toArray(chan_names);
+            chan_images = temp_ids;
 
-                    }
-                });
+        });
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
-        openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
-        //initSong(index);
+        openFragment(PlayerFragment.newInstance(images[index]));
         createSettings();
         listSettings();
-        setFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
+        setFragment(PlayerFragment.newInstance(images[index]));
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override public boolean onNavigationItemSelected(@NonNull MenuItem Item) {
-                    if (Item.getItemId() == R.id.navigation_player) {
-                        openFragment(PlayerFragment.newInstance(channelNames[index], images[index]));
-                        handler.post(runnableCode);
-                        return true;
-                    } else if (Item.getItemId() == R.id.navigation_channels) {
-                        openFragment(ChannelFragment.newInstance());
-                        handler.removeCallbacks(runnableCode);
-                        return true;
-                    } else if (Item.getItemId() == R.id.navigation_settings) {
-                        openFragment(SettingsFragment.newInstance());
-                        handler.removeCallbacks(runnableCode);
-                        return true;
-                    } else {
-                        return false;
-                    }
+            Item -> {
+                if (Item.getItemId() == R.id.navigation_player) {
+                    openFragment(PlayerFragment.newInstance(images[index]));
+                    handler.post(runnableCode);
+                    return true;
+                } else if (Item.getItemId() == R.id.navigation_channels) {
+                    openFragment(ChannelFragment.newInstance());
+                    handler.removeCallbacks(runnableCode);
+                    return true;
+                } else if (Item.getItemId() == R.id.navigation_settings) {
+                    openFragment(SettingsFragment.newInstance());
+                    handler.removeCallbacks(runnableCode);
+                    return true;
+                } else {
+                    return false;
                 }
             };
 }
+
