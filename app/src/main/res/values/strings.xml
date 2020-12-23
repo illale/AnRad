@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidRadio</string>
+    <string name="app_name">Kaiku</string>
     <string name="logo_of_channel_playing">Logo of channel playing</string>
     <string name="choose_previous_channel">Choose previous channel</string>
     <string name="pause_playback">Pause playback</string>

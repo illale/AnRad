@@ -2,14 +2,22 @@ package com.example.androidradio;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,13 +51,12 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     SimpleExoPlayer player = null;
     BottomNavigationView bottomNavigationView;
-    String[] channelNames = {"YLEX", "RADIO NOVA", "SUOMI-ROCK", "NRJ", "ISKELMÄ", "PUHE", "RADIO HELMI", "RADIO ROCK", "SUOMI-POP", "AITO-ISKELMÄ"};
-    int[] images = {R.drawable.ylex, R.drawable.radionova, R.drawable.suomirock, R.drawable.nrj, R.drawable.iskelma_valt, R.drawable.yle_puhe, R.drawable.helmiradio, R.drawable.radio_rock, R.drawable.radio_suomipop, R.drawable.aito_iskelma};
     Uri uri = null;
     int index = 0;
     public static boolean PLAYING = false;
     public static String song;
     public static String song_artist;
+    public static int image = R.drawable.aito_iskelma;
     private List<Channel> chans;
     public static String[] chan_names;
     public static List<Integer> chan_images = new ArrayList<>();
@@ -60,7 +67,9 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            setSong(index);
+            if (PLAYING) {
+                setSong(index);
+            }
             handler.postDelayed(this, 5000);
         }
     };
@@ -84,10 +93,6 @@ public class MainActivity extends AppCompatActivity {
         List<String> keys = new ArrayList<>(values.keySet());
         pref = new String[keys.size()];
         keys.toArray(pref);
-    }
-
-    public void printCurrentChannel(int id) {
-        System.out.println("Current channel = " + chans.get(id).getChannelName());
     }
 
     public String getChannelAudioUrl(int id) {
@@ -148,6 +153,19 @@ public class MainActivity extends AppCompatActivity {
         player.setPlayWhenReady(true);
     }
 
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Radio";
+            String description = "Finnish radio stations on your phone";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("RADIO", name, importance);
+            channel.setDescription(description);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void play(View v) {
         /*
         If player object has not been created, create one with selected channel, else
@@ -159,9 +177,32 @@ public class MainActivity extends AppCompatActivity {
             initPlayback(url);
             PLAYING = true;
             changeButton();
-            printCurrentChannel(index);
-            this.setImage(index);
-            this.setSong(index);
+            setImage(index);
+            setSong(index);
+
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            PendingIntent prevIntent = PendingIntent.getActivity(this, 1, intent, 0);
+            PendingIntent pauseIntent = PendingIntent.getActivity(this, 2, intent, 0);
+            PendingIntent nextIntent = PendingIntent.getActivity(this, 3, intent, 0);
+
+            MediaSession ses = new MediaSession(this, "ses");
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "RADIO")
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setSmallIcon(R.drawable.exo_notification_small_icon)
+                    .addAction(R.drawable.exo_notification_previous, "Previous", prevIntent)
+                    .addAction(R.drawable.exo_notification_pause, "Pause", pauseIntent)
+                    .addAction(R.drawable.exo_notification_next, "Next", nextIntent)
+                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(2))
+                    .setContentTitle(song_artist)
+                    .setContentText(song)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            NotificationManagerCompat man = NotificationManagerCompat.from(this);
+            man.notify(1, builder.build());
+
         } else {
             PLAYING = false;
             changeButton();
@@ -187,9 +228,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setImage(int i) {
-        ImageView view = findViewById(R.id.imageView);
-        view.setImageDrawable(getResources().getDrawable(images[i]));
-        view.invalidate();
+        image = chan_images.get(i);
     }
 
     @SuppressLint("SetTextI18n")
@@ -203,7 +242,6 @@ public class MainActivity extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(this);
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
                 try {
-
                     Iterator<String> rep = response.keys();
                     String key;
                     while(rep.hasNext()) {
@@ -222,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
                             } else if (response.getJSONObject(key).has("0")) {
                                 song = response.getJSONObject(key).getJSONObject("0").getString("song");
                                 song_artist = response.getJSONObject(key).getJSONObject("0").getString("artist");
-
                                 break;
                             }
                         } else {
@@ -246,8 +283,8 @@ public class MainActivity extends AppCompatActivity {
     public int checkChannel(String channel) {
         //Finds and returns the index of given channel
         //NOTE: should be changed, when ROOM is used
-        for (int i = 0; i <= channelNames.length; i++) {
-            if (channelNames[i].equals(channel)) {
+        for (int i = 0; i <= chan_names.length; i++) {
+            if (chan_names[i].equals(channel)) {
                 return i;
             }
         }
@@ -263,9 +300,13 @@ public class MainActivity extends AppCompatActivity {
         if (player != null) {
             player.release();
         }
+
+
         //Get the index of chosen channel, that previous and next channels can be chosen correctly
         index = checkChannel(((TextView)v).getText().toString());
         String url = getChannelAudioUrl(index);
+        setImage(index);
+        setSong(index);
         //Initialize playback of a new channel
         PLAYING = true;
         initPlayback(url);
@@ -324,14 +365,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        createNotificationChannel();
         ChannelViewModel viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.getOrderedChannels().observe(this, channels -> {
             chans = channels;
             List<String> temp_chans = new ArrayList<>();
             List<Integer> temp_ids = new ArrayList<>();
             for (Channel chn: channels) {
-                System.out.println(chn.getChannelName());
-                System.out.println(chn.getChannelImageId());
                 temp_chans.add(chn.getChannelName());
                 temp_ids.add(chn.getChannelImageId());
             }
@@ -342,16 +382,16 @@ public class MainActivity extends AppCompatActivity {
         });
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
-        openFragment(PlayerFragment.newInstance(images[index]));
+        openFragment(PlayerFragment.newInstance());
         createSettings();
         listSettings();
-        setFragment(PlayerFragment.newInstance(images[index]));
+        setFragment(PlayerFragment.newInstance());
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             Item -> {
                 if (Item.getItemId() == R.id.navigation_player) {
-                    openFragment(PlayerFragment.newInstance(images[index]));
+                    openFragment(PlayerFragment.newInstance());
                     handler.post(runnableCode);
                     return true;
                 } else if (Item.getItemId() == R.id.navigation_channels) {

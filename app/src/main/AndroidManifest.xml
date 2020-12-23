@@ -13,6 +13,8 @@
         android:roundIcon="@mipmap/ic_iskelma_valt_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".ControlService" />
+
 
         <activity android:name=".MainActivity">
             <intent-filter>

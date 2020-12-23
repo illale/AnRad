@@ -15,17 +15,15 @@ import androidx.fragment.app.Fragment;
 
 
 public class PlayerFragment extends Fragment {
-    public static int image;
     Handler handler = new Handler();
     public PlayerFragment() {
 
     }
 
-    public static PlayerFragment newInstance(int image_id) {
+    public static PlayerFragment newInstance() {
         Bundle args = new Bundle();
         PlayerFragment fragment = new PlayerFragment();
         fragment.setArguments(args);
-        image = image_id;
         return fragment;
     }
 
@@ -34,11 +32,13 @@ public class PlayerFragment extends Fragment {
         public void run() {
             TextView song = getView().findViewById(R.id.channelSong);
             TextView artist = getView().findViewById(R.id.channelArtist);
+            ImageView image = getView().findViewById(R.id.imageView);
             song.setText(MainActivity.song);
             artist.setText(MainActivity.song_artist);
+            image.setImageDrawable(getResources().getDrawable(MainActivity.image));
             song.invalidate();
             artist.invalidate();
-            handler.postDelayed(this, 5000);
+            handler.postDelayed(this, 500);
         }
     };
 
@@ -63,9 +63,6 @@ public class PlayerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
-        ImageView imageView = view.findViewById(R.id.imageView);
-        imageView.setImageDrawable(getResources().getDrawable(image));
-        imageView.invalidate();
         TextView textView = view.findViewById(R.id.channelSong);
         textView.setHorizontallyScrolling(true);
         textView.setSelected(true);
