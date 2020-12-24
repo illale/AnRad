@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    
 
 
     <application
@@ -15,7 +17,14 @@
         android:theme="@style/AppTheme">
         <service android:name=".ControlService" />
 
-
+        <receiver android:name=".ControlBroadcast" android:exported="false">
+            <intent-filter>
+                <action android:name="PAUSE" />
+                <action android:name="NEXT" />
+                <action android:name="PREVIOUS" />
+            </intent-filter>
+        </receiver>
+        
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

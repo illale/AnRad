@@ -2,29 +2,23 @@ package com.example.androidradio;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -48,12 +42,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements ControlListener {
     SimpleExoPlayer player = null;
     BottomNavigationView bottomNavigationView;
     Uri uri = null;
     int index = 0;
     public static boolean PLAYING = false;
+    public static boolean START = true;
     public static String song;
     public static String song_artist;
     public static int image = R.drawable.aito_iskelma;
@@ -62,13 +58,15 @@ public class MainActivity extends AppCompatActivity {
     public static List<Integer> chan_images = new ArrayList<>();
     private SharedPreferences shPref;
     public static String[] pref;
+    public static ControlBroadcast receiver;
     Handler handler = new Handler();
 
     private Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
-            if (PLAYING) {
+            if (PLAYING || START) {
                 setSong(index);
+                START = false;
             }
             handler.postDelayed(this, 5000);
         }
@@ -119,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         Check if requested channel url contains .m3u8. If it contains, return HlsMediaSource object,
         which is used for playing HLS streams. If it does not contain, return ProgressiveMediaSource
-        object which is used for playing continuous audio file streams, which are not sent to endusers
-        with playlist files of small files.
+        object which is used for playing continuous audio file streams.
         */
         if (audioUrl.contains(".m3u8")) {
             return new HlsMediaSource.Factory(factory).createMediaSource(address);
@@ -153,18 +150,6 @@ public class MainActivity extends AppCompatActivity {
         player.setPlayWhenReady(true);
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Radio";
-            String description = "Finnish radio stations on your phone";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("RADIO", name, importance);
-            channel.setDescription(description);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void play(View v) {
         /*
@@ -176,37 +161,19 @@ public class MainActivity extends AppCompatActivity {
             String url = getChannelAudioUrl(index);
             initPlayback(url);
             PLAYING = true;
+            System.out.println(this.toString());
+            receiver = new ControlBroadcast();
+            receiver.setListener(this);
+            startService();
             changeButton();
             setImage(index);
             setSong(index);
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            PendingIntent prevIntent = PendingIntent.getActivity(this, 1, intent, 0);
-            PendingIntent pauseIntent = PendingIntent.getActivity(this, 2, intent, 0);
-            PendingIntent nextIntent = PendingIntent.getActivity(this, 3, intent, 0);
-
-            MediaSession ses = new MediaSession(this, "ses");
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "RADIO")
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .setSmallIcon(R.drawable.exo_notification_small_icon)
-                    .addAction(R.drawable.exo_notification_previous, "Previous", prevIntent)
-                    .addAction(R.drawable.exo_notification_pause, "Pause", pauseIntent)
-                    .addAction(R.drawable.exo_notification_next, "Next", nextIntent)
-                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(2))
-                    .setContentTitle(song_artist)
-                    .setContentText(song)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            NotificationManagerCompat man = NotificationManagerCompat.from(this);
-            man.notify(1, builder.build());
 
         } else {
             PLAYING = false;
             changeButton();
             releasePlayer();
+            stopService();
         }
     }
 
@@ -309,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
         setSong(index);
         //Initialize playback of a new channel
         PLAYING = true;
+        startService();
         initPlayback(url);
     }
 
@@ -336,6 +304,19 @@ public class MainActivity extends AppCompatActivity {
         this.setSong(index);
     }
 
+    public void startService() {
+        Intent serviceIntent = new Intent(this, ControlService.class);
+        serviceIntent.putExtra("inputExtra", "RADIO");
+
+        ContextCompat.startForegroundService(this, serviceIntent);
+
+    }
+
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, ControlService.class);
+        stopService(serviceIntent);
+    }
+
     public void previousUri(View v) {
         /*
         Used for starting playback of the previous channel from channels list
@@ -360,12 +341,23 @@ public class MainActivity extends AppCompatActivity {
         this.setSong(index);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService();
+        releasePlayer();
+        super.onDestroy();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        createNotificationChannel();
         ChannelViewModel viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.getOrderedChannels().observe(this, channels -> {
             chans = channels;
@@ -406,5 +398,14 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             };
-}
 
+    @Override
+    public void pause() {
+        System.out.println("TAG: NO EI KYLLÄ PISTETÄ PIENEMÄLLE");
+    }
+
+    @Override
+    public void print() {
+        System.out.println("HAHAHAH");
+    }
+}

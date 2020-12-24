@@ -63,6 +63,8 @@ public class PlayerFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
+        ImageView img = view.findViewById(R.id.imageView);
+        img.setImageDrawable(getResources().getDrawable(MainActivity.image));
         TextView textView = view.findViewById(R.id.channelSong);
         textView.setHorizontallyScrolling(true);
         textView.setSelected(true);
