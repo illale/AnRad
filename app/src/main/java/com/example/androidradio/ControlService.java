@@ -60,12 +60,9 @@ public class ControlService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        BroadcastReceiver br = MainActivity.receiver;
-
         createNotificationChannel();
         Intent notificationIntent = new Intent(this, ControlService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
 
         Intent prevIntent = new Intent(this, ControlBroadcast.class);
         prevIntent.setAction("PREVIOUS");
@@ -75,11 +72,6 @@ public class ControlService extends Service {
 
         Intent nextIntent = new Intent(this, ControlBroadcast.class);
         nextIntent.setAction("NEXT");
-
-        IntentFilter filter = new IntentFilter("PAUSE");
-        filter.addAction("NEXT");
-        filter.addAction("PREVIOUS");
-        this.registerReceiver(br, filter);
 
         PendingIntent prevPendingIntent = PendingIntent.getBroadcast(this, 1, prevIntent, 0);
         PendingIntent pausePendingIntent = PendingIntent.getBroadcast(this, 2, pauseIntent, 0);

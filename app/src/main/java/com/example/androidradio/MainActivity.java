@@ -9,9 +9,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     private SharedPreferences shPref;
     public static String[] pref;
     public static ControlBroadcast receiver;
+    public static MainActivity Instance;
     Handler handler = new Handler();
 
     private Runnable runnableCode = new Runnable() {
@@ -161,9 +162,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
             String url = getChannelAudioUrl(index);
             initPlayback(url);
             PLAYING = true;
-            System.out.println(this.toString());
-            receiver = new ControlBroadcast();
-            receiver.setListener(this);
+
             startService();
             changeButton();
             setImage(index);
@@ -258,6 +257,56 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         return 0;
     }
 
+    public void previousUri() {
+        if (player != null) {
+            releasePlayer();
+        }
+
+        if (index == 0) {
+            index = chans.size() - 1;
+        } else {
+            index--;
+        }
+
+        String url = getChannelAudioUrl(index);
+        initPlayback(url);
+        setImage(index);
+        setSong(index);
+    }
+
+    public void nextUri() {
+
+        if (player != null) {
+            releasePlayer();
+        }
+
+        if (index == chans.size() - 1) {
+            index = 0;
+        } else {
+            index++;
+        }
+
+        String url = getChannelAudioUrl(index);
+        initPlayback(url);
+        setImage(index);
+        setSong(index);
+    }
+
+    public void play() {
+        if (player == null) {
+            String url = getChannelAudioUrl(index);
+            initPlayback(url);
+            PLAYING = true;
+            changeButton();
+            setImage(index);
+            setSong(index);
+        } else {
+            PLAYING = false;
+            changeButton();
+            releasePlayer();
+        }
+    }
+
     public void setUri(View v) {
         /*
         This method is used only when selecting channel from recyclerview list
@@ -300,8 +349,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         String url = getChannelAudioUrl(index);
         //Initialize playback of a new channel
         initPlayback(url);
-        this.setImage(index);
-        this.setSong(index);
+        setImage(index);
+        setSong(index);
     }
 
     public void startService() {
@@ -337,8 +386,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         String url = getChannelAudioUrl(index);
         //Initialize playback of a new channel
         initPlayback(url);
-        this.setImage(index);
-        this.setSong(index);
+        setImage(index);
+        setSong(index);
     }
 
     @Override
@@ -377,6 +426,12 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         openFragment(PlayerFragment.newInstance());
         createSettings();
         listSettings();
+        receiver = new ControlBroadcast();
+        Instance = this;
+        IntentFilter filter = new IntentFilter("PAUSE");
+        filter.addAction("NEXT");
+        filter.addAction("PREVIOUS");
+        this.registerReceiver(receiver, filter);
         setFragment(PlayerFragment.newInstance());
     }
 
@@ -401,11 +456,16 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
     @Override
     public void pause() {
-        System.out.println("TAG: NO EI KYLLÄ PISTETÄ PIENEMÄLLE");
+        play();
     }
 
     @Override
-    public void print() {
-        System.out.println("HAHAHAH");
+    public void next() {
+        nextUri();
+    }
+
+    @Override
+    public void previous() {
+        previousUri();
     }
 }

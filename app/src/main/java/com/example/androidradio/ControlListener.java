@@ -1,7 +1,9 @@
 package com.example.androidradio;
 
-public interface ControlListener {
-    void pause();
+import java.io.Serializable;
 
-    void print();
+public interface ControlListener extends Serializable {
+    void pause();
+    void next();
+    void previous();
 }

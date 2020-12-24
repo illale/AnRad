@@ -4,12 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
+
 public class ControlBroadcast extends BroadcastReceiver {
 
-    public ControlListener listener;
+    private ControlListener listener;
 
-    public void setListener(ControlListener lis) {
-        this.listener = lis;
+    public void setListener(@NonNull ControlListener lis) {
+        listener = (ControlListener) lis;
+        System.out.println("TAG: ".concat(lis.toString()));
     }
 
     @Override
@@ -18,16 +21,17 @@ public class ControlBroadcast extends BroadcastReceiver {
 
             System.out.println("INTENT");
         if (action.equals("PAUSE")) {
-            if (listener != null) {
-                listener.pause();
+            if (MainActivity.Instance != null) {
+                MainActivity.Instance.pause();
             } else {
                 System.out.println("TAG: NULL");
             }
 
-            System.out.println("TAG: PAUSE");
         } else if (action.equals("NEXT")) {
+            MainActivity.Instance.nextUri();
             System.out.println("TAG: NEXT");
         } else if (action.equals("PREVIOUS")) {
+            MainActivity.Instance.previousUri();
             System.out.println("TAG: PREVOIUS");
         } else {
             System.out.println("TAG: NONE");
