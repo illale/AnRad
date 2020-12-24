@@ -1,0 +1,168 @@
+Yle Puhe|https://areena.yle.fi/radio/ohjelmat/yle-puhe|http://yle.fi/livestream/ylepuhe.asx|http://www.radiot.fi/#!/kanava/yle-puhe
+
+Yle Radio 1|https://areena.yle.fi/radio/ohjelmat/yle-radio-1|http://yle.fi/livestream/yleradio1.asx|http://www.radiot.fi/#!/kanava/yle-radio-1
+
+Yle Radio Suomi|https://areena.yle.fi/radio/ohjelmat/yle-radio-suomi?_c=yle-radio-suomi-helsinki|http://www.yle.fi/livestream/radiosuomi.asx|http://www.radiot.fi/#!/kanava/radio-suomi-helsinki
+
+Yle Vega|https://arenan.yle.fi/radio/program/yle-vega|http://yle.fi/livestream/vega.asx|http://www.radiot.fi/#!/kanava/radio-vega-huvudstadsregionen
+
+Yle X3M|http://www.x3m.fi/|http://yle.fi/livestream/x3m.asx|http://www.radiot.fi/#!/kanava/yle-x3m
+
+Yle Klassinen|https://areena.yle.fi/radio/ohjelmat/yle-klassinen|http://mediau.yle.fi/liveklassinen|http://www.radiot.fi/#!/kanava/yle-klassinen
+
+YleX|https://areena.yle.fi/radio/ohjelmat/ylex|http://www.yle.fi/livestream/ylex.asx|http://www.radiot.fi/#!/kanava/ylex
+
+H‰meenlinna|http://yle.fi/uutiset/hameenlinna/|http://yle.fi/livestream/radiohame.asx|http://www.radiot.fi/#!/kanava/radio-suomi-hameenlinna
+
+Joensuu|http://yle.fi/uutiset/joensuu/|http://yle.fi/livestream/pohjkarjala.asx|http://www.radiot.fi/#!/kanava/radio-suomi-joensuu
+
+Jyv‰skyl‰|http://yle.fi/uutiset/jyvaskyla/|http://yle.fi/livestream/keskisuomi.asx|http://www.radiot.fi/#!/kanava/radio-suomi-jyvaskyla
+
+Kajaani|http://yle.fi/uutiset/kajaani/|http://yle.fi/livestream/kainuu.asx|http://www.radiot.fi/#!/kanava/radio-suomi-kajaani
+
+Kemi|http://yle.fi/uutiset/kemi/|http://yle.fi/livestream/perameri.asx|http://www.radiot.fi/#!/kanava/radio-suomi-kemi
+
+Kokkola|http://yle.fi/uutiset/kokkola/|http://yle.fi/livestream/keskipohjanmaa.asx|http://www.radiot.fi/#!/kanava/radio-suomi-kokkola
+
+Kotka|http://yle.fi/uutiset/kotka/|http://yle.fi/livestream/kymenlaakso.asx|http://www.radiot.fi/#!/kanava/radio-suomi-kotka
+
+Kuopio|http://yle.fi/uutiset/kuopio/|http://yle.fi/livestream/radiosavo.asx|http://www.radiot.fi/#!/kanava/radio-suomi-kuopio
+
+Lahti|http://yle.fi/uutiset/lahti/|http://yle.fi/livestream/lahdenradio.asx|http://www.radiot.fi/#!/kanava/radio-suomi-lahti
+
+Lappeenranta|http://yle.fi/uutiset/lappeenranta/|http://yle.fi/livestream/etelakarjala.asx|http://www.radiot.fi/#!/kanava/radio-suomi-lappeenranta
+
+Mikkeli|http://yle.fi/uutiset/mikkeli/|http://yle.fi/livestream/etelasavo.asx|http://www.radiot.fi/#!/kanava/radio-suomi-mikkeli
+
+Oulu|http://yle.fi/uutiset/oulu/|http://yle.fi/livestream/ouluradio.asx|http://www.radiot.fi/#!/kanava/radio-suomi-oulu
+
+Pohjanmaa|http://yle.fi/uutiset/pohjanmaa/|http://yle.fi/livestream/pohjanmaa.asx|http://www.radiot.fi/#!/kanava/radio-suomi-pohjanmaa
+
+Pori|http://yle.fi/uutiset/pori/|http://yle.fi/livestream/satakunta.asx|http://www.radiot.fi/#!/kanava/radio-suomi-pori
+
+Rovaniemi|http://yle.fi/uutiset/rovaniemi/|http://yle.fi/livestream/lapinradio.asx|http://www.radiot.fi/#!/kanava/radio-suomi-rovaniemi
+
+Tampere|http://yle.fi/uutiset/tampere/|http://yle.fi/livestream/tampere.asx|http://www.radiot.fi/#!/kanava/radio-suomi-tampere
+
+Turku|http://yle.fi/uutiset/turku/|http://yle.fi/livestream/turunradio.asx|http://www.radiot.fi/#!/kanava/radio-suomi-turku
+
+V‰stnyland|https://svenska.yle.fi/vastnyland|http://yle.fi/livestream/vegavast.asx|http://www.radiot.fi/#!/kanava/radio-vega-vastnyland
+
+≈boland|https://svenska.yle.fi/aboland|http://yle.fi/livestream/vegaabo.asx|http://www.radiot.fi/#!/kanava/radio-vega-aboland
+
+÷sterbotten|https://svenska.yle.fi/osterbotten|http://yle.fi/livestream/vegaoster.asx|http://www.radiot.fi/#!/kanava/radio-vega-osterbotten
+
+÷stnyland|https://svenska.yle.fi/ostnyland|http://yle.fi/livestream/vegaost.asx|http://www.radiot.fi/#!/kanava/radio-vega-ostnyland
+
+Iskelm‰|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/iskelma_64.aac|http://www.radiot.fi/#!/kanava/iskelma-valt
+
+J‰rviradio|https://www.jarviradio.fi/|http://radio2.6net.fi:8000/jarviradio2|https://www.radiot.fi/kanavat/jarviradio
+
+Kasari|https://www.kasariradio.fi|https://stream.bauermedia.fi/kasari/kasari_64.aac|https://www.radiot.fi/kanavat/kasari
+
+Loop|http://www.loop.fi/|https://www.supla.fi/loop|http://www.radiot.fi/#!/kanava/loop
+
+Radio Dei|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/yleisohjelma.m3u|http://www.radiot.fi/#!/kanava/radio-dei
+
+Radio Nova|http://www.radionova.fi/|https://stream.bauermedia.fi/radionova/radionova_64.aac|http://www.radiot.fi/#!/kanava/radio-nova
+
+Radio NRJ|http://www.nrj.fi/|https://stream.bauermedia.fi/nrj/nrj_64.aac|http://www.radiot.fi/#!/kanava/nrj
+
+Radio Patmos|http://patmos.studio24.fi/|http://46.28.53.118:7011/radio|http://www.radiot.fi/#!/kanava/radio-patmos
+
+Radio Rock|http://www.radiorock.fi/|https://www.supla.fi/radiorock|http://www.radiot.fi/#!/kanava/radio-rock
+
+Radio Suomipop|http://www.radiosuomipop.fi/|https://www.supla.fi/radiosuomipop|http://www.radiot.fi/#!/kanava/radio-suomipop
+
+Radio SuomiRock|http://www.radiosuomirock.fi/|https://stream.bauermedia.fi/suomirock/suomirock_64.aac|http://www.radiot.fi/#!/kanava/suomirock
+
+SuomiR‰p|https://radioplay.fi/suomirap/kanava/|https://stream.bauermedia.fi/suomirap/suomirap_64.aac|https://www.radiot.fi/kanavat/suomirap
+
+Ys‰ri|https://www.ysariradio.fi|https://stream.bauermedia.fi/ysari/ysari_64.aac|https://www.radiot.fi/kanavat/ysari
+
+Auran Aallot|http://www.auranaallot.fi|http://stream.bauermedia.fi/auranaallot/auranaallot_64.aac|http://www.radiot.fi/#!/kanava/auran-aallot
+
+FUN Tampere|http://www.funtampere.fi|http://st.downtime.fi/fun.mp3|http://www.radiot.fi/#!/kanava/fun-tampere
+
+Iskelm‰ Ankkuri|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/kem_64.aac|http://www.radiot.fi/#!/kanava/iskelma-kemi
+
+Iskelm‰ Forssa|https://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/frs_64.aac|http://www.radiot.fi/#!/kanava/iskelma-frs
+
+Iskelm‰ Helsinki|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/hki_64.aac|http://www.radiot.fi/#!/kanava/iskelma
+
+Iskelm‰ Hyvink‰‰|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/hyv_64.aac|http://www.radiot.fi/#!/kanava/iskelma-hyvinkaa
+
+Iskelm‰ Janne|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/hml_64.aac|http://www.radiot.fi/#!/kanava/iskelma-hameenlinna
+
+Iskelm‰ Jyv‰skyl‰|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/jkl_64.aac|http://www.radiot.fi/#!/kanava/iskelma-jkl
+
+Iskelm‰ Kotka|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/ktk_64.aac|http://www.radiot.fi/#!/kanava/iskelma-ktk
+
+Iskelm‰ Kouvola|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/kvl_64.aac|http://www.radiot.fi/#!/kanava/iskelma-kvl
+
+Iskelm‰ Lappeenranta|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/lpr_64.aac|http://www.radiot.fi/#!/kanava/iskelma-lpr
+
+Iskelm‰ Oulu|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/oul_64.aac|http://www.radiot.fi/#!/kanava/iskelma-oulu
+
+Iskelm‰ Rovaniemi|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/rov_64.aac|http://www.radiot.fi/#!/kanava/iskelma-rov
+
+Iskelm‰ Sastamala|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/sas_64.aac|http://www.radiot.fi/#!/kanava/iskelma-sastamala
+
+Iskelm‰†Satakunta|/iske|https://stream.bauermedia.fi/iskelma/rma_64.aac|http://www.radiot.fi/#!/kanava/iskelma-satakunta
+
+Iskelm‰ Turku|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/tku_64.aac|http://www.radiot.fi/#!/kanava/iskelma-tku
+
+Iskelm‰ Tampere|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/tre_64.aac|http://www.radiot.fi/#!/kanava/iskelma-tre
+
+Iskelm‰ Uusimaa|http://www.iskelma.fi/|https://stream.bauermedia.fi/iskelma/loh_64.aac|http://www.radiot.fi/#!/kanava/iskelma-loh
+
+Radio 957|http://www.radio957.fi|https://stream.bauermedia.fi/radio957/radio957_64.aac|http://www.radiot.fi/#!/kanava/radio957
+
+Radio City Helsinki|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/hki_64.aac|http://www.radiot.fi/#!/kanava/radio-city-hki
+
+Radio City H‰meenlinna|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/hml_64.aac|http://www.radiot.fi/#!/kanava/radio-city-hml
+
+Radio City Jyv‰skyl‰|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/jkl_64.aac|http://www.radiot.fi/#!/kanava/radio-city-jkl
+
+Radio City Kouvola|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/kvl_64.aac|http://www.radiot.fi/#!/kanava/radio-city-kvl
+
+Radio City Lappeenranta|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/lpr_64.aac|http://www.radiot.fi/#!/kanava/radio-city-lpr
+
+Radio City Oulu|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/oul_64.aac|http://www.radiot.fi/#!/kanava/radio-city-oulu
+
+Radio City Tampere|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/tre_64.aac|http://www.radiot.fi/#!/kanava/radio-city-tre
+
+Radio City Turku|http://www.radiocity.fi/|https://stream.bauermedia.fi/radiocity/tku_64.aac|http://www.radiot.fi/#!/kanava/radio-city-tku
+
+Radio Dei Helsinki|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/helsinki|http://livetaajuus.fi/radio/radio-dei-helsinki/
+
+Radio Dei Kajaani|https://www.radiodei.fi/|http://isojako.radiodei.fi:8000/kajaani|https://www.radiot.fi/kanavat/radio-dei-kajaani
+
+Radio Dei Kemi|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/tornio|http://livetaajuus.fi/radio/radio-dei-kemi/
+
+Radio Dei Kokkola|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/kruunupyy|http://livetaajuus.fi/radio/radio-dei-kokkola/
+
+Radio Dei Kristiinankaupunki|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/kristiinankaupunki|http://livetaajuus.fi/radio/radio-dei-kristiinankaupunki/
+
+Radio Dei Oulu|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/oulu|http://www.radiot.fi/#!/kanava/radio-dei-oulu
+
+Radio Dei Pohjanmaa|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/lapua|http://www.radiot.fi/#!/kanava/radio-dei-pohjanmaa
+
+Radio Dei Rovaniemi|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/rovaniemi|http://www.radiot.fi/#!/kanava/radio-dei-rovaniemi
+
+Radio Dei Turku|http://www.radiodei.fi/|http://isojako.radiodei.fi:8000/turkueurajoki|http://livetaajuus.fi/radio/radio-dei-turku/
+
+Radio Helsinki|http://www.radiohelsinki.fi/|https://stream.radiohelsinki.fi|http://www.radiot.fi/#!/kanava/radio-helsinki
+
+Radio Kaakko|https://radiokaakko.fi/|http://wr2.downtime.fi/kaakko.aac|http://www.radiot.fi/#!/kanava/radiokaakko
+
+Radio Keskisuomalainen|https://www.radiokeskisuomalainen.fi/|https://cast.radiokeskisuomalainen.fi/radiokeskisuomalainen|https://www.radiot.fi/kanavat/keskisuomalainen
+
+Radio Pooki|http://www.radiopooki.fi/|https://stream.bauermedia.fi/radiopooki/radiopooki_64.aac|http://www.radiot.fi/#!/kanava/radio-pooki
+
+Radio Vaasa|http://www.radiovaasa.fi/|https://stream.protonbroadcast.com:8443/radiovaasa.mp3|http://www.radiot.fi/#!/kanava/radio-vaasa
+
+Radio Voima|http://www.radiovoima.fi/|https://cast2.radiovoima.fi/voima.mp3|http://www.radiot.fi/#!/kanava/radio-voima
+
+Savon Aallot|https://www.savonaallot.fi/|https://cast.savonaallot.fi/savonaallot|https://www.radiot.fi/kanavat/savon-aallot
+

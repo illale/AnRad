@@ -397,9 +397,10 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
     @Override
     protected void onDestroy() {
-        stopService();
-        releasePlayer();
         super.onDestroy();
+        stopService();
+        unregisterReceiver(receiver);
+        releasePlayer();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

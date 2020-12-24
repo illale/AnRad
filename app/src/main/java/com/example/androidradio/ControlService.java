@@ -1,14 +1,11 @@
 package com.example.androidradio;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Handler;
@@ -24,6 +21,10 @@ import androidx.core.app.NotificationCompat;
 public class ControlService extends Service {
     private Looper serviceLooper;
     private ServiceHandler serviceHandler;
+    private NotificationCompat.Builder builder;
+    private Handler handler = new Handler();
+    private Notification notification;
+    private NotificationManager manager;
 
 
     private final class ServiceHandler extends Handler {
@@ -36,6 +37,21 @@ public class ControlService extends Service {
 
         }
     }
+
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            builder.setContentTitle(MainActivity.song)
+                    .setContentText(MainActivity.song_artist)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), MainActivity.image));
+
+            notification = builder.build();
+
+            startForeground(255, notification);
+
+            serviceHandler.postDelayed(this ,500);
+        }
+    };
 
     @Override
     public void onCreate() {
@@ -52,7 +68,7 @@ public class ControlService extends Service {
             CharSequence name = "Radio";
             int importance = NotificationManager.IMPORTANCE_LOW;
             NotificationChannel channel = new NotificationChannel("RADIO", name, importance);
-            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
     }
@@ -77,7 +93,7 @@ public class ControlService extends Service {
         PendingIntent pausePendingIntent = PendingIntent.getBroadcast(this, 2, pauseIntent, 0);
         PendingIntent nextPendingIntent = PendingIntent.getBroadcast(this, 3, nextIntent, 0);
 
-        Notification notification = new NotificationCompat.Builder(this, "RADIO")
+        builder = new NotificationCompat.Builder(this, "RADIO")
                 .setContentTitle(MainActivity.song)
                 .setContentText(MainActivity.song_artist)
                 .setSmallIcon(R.drawable.exo_notification_small_icon)
@@ -89,12 +105,17 @@ public class ControlService extends Service {
                 .addAction(R.drawable.exo_notification_previous, "Previous", prevPendingIntent)
                 .addAction(R.drawable.exo_notification_pause, "Pause", pausePendingIntent)
                 .addAction(R.drawable.exo_notification_next, "Next", nextPendingIntent)
+                .setShowWhen(false)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setShowActionsInCompactView(1))
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), MainActivity.image)).build();
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), MainActivity.image));
 
+        Notification notification = builder.build();
+
+        manager.notify(255, notification);
         startForeground(255, notification);
 
+        handler.post(runnableCode);
         return START_NOT_STICKY;
     }
     @Nullable
@@ -107,5 +128,6 @@ public class ControlService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        manager.cancelAll();
     }
 }
