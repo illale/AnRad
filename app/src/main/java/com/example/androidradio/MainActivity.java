@@ -73,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         }
     };
 
+    public String getChannelName() {
+        return chans.get(index).getChannelName();
+    }
+
     public static String[] getAllSettings() {
         return pref;
     }
@@ -83,7 +87,12 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         SharedPreferences.Editor editor = shPref.edit();
         editor.putBoolean("SHOW_SONGS", true);
         editor.putBoolean("ENABLE_VISUALIZATION", false);
+        editor.putInt("DEFAULT_CHANNEL", 0);
         editor.apply();
+    }
+
+    public void setDefaultChannel(int i) {
+            shPref.edit().putInt("DEFAULT_CHANNEL", i).apply();
     }
 
     public void listSettings() {
@@ -132,10 +141,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         Create new instance of SimpleExoPlayer using
          */
         player = new SimpleExoPlayer.Builder(getApplicationContext()).build();
-
-        //Create uri from given url
-        uri = Uri.parse(audioUrl);
-
         /*
         Create new DataSourceFactory, which creates new DataSource objects. DataSource is an object
         where incoming data can be read. While DefaultDataSourceFactory can be used for many types of
@@ -143,8 +148,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         */
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
                 Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
-        MediaSource audioSource = getAudioSource(dataSourceFactory, uri, audioUrl);
-
+        MediaSource audioSource = getAudioSource(dataSourceFactory, Uri.parse(audioUrl), audioUrl);
         //Inject MediaSource into SimpleExoPlayer.
         player.prepare(audioSource);
         //Start playback when SimpleExoPLayer is ready for it.
@@ -159,10 +163,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         to play.
         */
         if (player == null) {
-            String url = getChannelAudioUrl(index);
-            initPlayback(url);
+            initPlayback(getChannelAudioUrl(index));
             PLAYING = true;
-
             startService();
             changeButton();
             setImage(index);
@@ -200,10 +202,9 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     @SuppressLint("SetTextI18n")
     public void setSong(int i) {
         String url = getChannelSongUrl(i);
-
         if (url.equals("None")) {
-            song = "Yle Puhe";
-            song_artist = "Puhe";
+            song = getChannelName();
+            song_artist = song;
         } else {
             RequestQueue queue = Volley.newRequestQueue(this);
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
@@ -267,9 +268,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         } else {
             index--;
         }
-
-        String url = getChannelAudioUrl(index);
-        initPlayback(url);
+        initPlayback(getChannelAudioUrl(index));
         setImage(index);
         setSong(index);
     }
@@ -285,17 +284,14 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         } else {
             index++;
         }
-
-        String url = getChannelAudioUrl(index);
-        initPlayback(url);
+        initPlayback(getChannelAudioUrl(index));
         setImage(index);
         setSong(index);
     }
 
     public void play() {
         if (player == null) {
-            String url = getChannelAudioUrl(index);
-            initPlayback(url);
+            initPlayback(getChannelAudioUrl(index));
             PLAYING = true;
             changeButton();
             setImage(index);
@@ -320,13 +316,13 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
         //Get the index of chosen channel, that previous and next channels can be chosen correctly
         index = checkChannel(((TextView)v).getText().toString());
-        String url = getChannelAudioUrl(index);
+
         setImage(index);
         setSong(index);
         //Initialize playback of a new channel
         PLAYING = true;
         startService();
-        initPlayback(url);
+        initPlayback(getChannelAudioUrl(index));
     }
 
     public void nextUri(View v) {
@@ -346,9 +342,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         } else {
             index++;
         }
-        String url = getChannelAudioUrl(index);
-        //Initialize playback of a new channel
-        initPlayback(url);
+        initPlayback(getChannelAudioUrl(index));
         setImage(index);
         setSong(index);
     }
@@ -356,9 +350,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     public void startService() {
         Intent serviceIntent = new Intent(this, ControlService.class);
         serviceIntent.putExtra("inputExtra", "RADIO");
-
         ContextCompat.startForegroundService(this, serviceIntent);
-
     }
 
     public void stopService() {
@@ -376,16 +368,14 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         if (player != null) {
             releasePlayer();
         }
-
         //Check that index doesn't become smaller than zero.
         if (index == 0) {
             index = chans.size() - 1;
         } else {
             index--;
         }
-        String url = getChannelAudioUrl(index);
         //Initialize playback of a new channel
-        initPlayback(url);
+        initPlayback(getChannelAudioUrl(index));
         setImage(index);
         setSong(index);
     }
