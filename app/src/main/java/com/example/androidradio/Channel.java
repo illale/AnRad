@@ -21,7 +21,6 @@ public class Channel {
     @ColumnInfo (name = "channel_image_id")
     private int channelImageId;
 
-
     //Constructor to set the values for one row of the table
     public Channel(String channelName, String channelAudioUrl, String channelSongUrl, int channelImageId) {
         this.channelName = channelName;

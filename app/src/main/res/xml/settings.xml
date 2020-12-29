@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory>
+        <SwitchPreferenceCompat
+            android:background="#FFFFFF"
+            android:icon="@drawable/ic_baseline_album_24"
+            android:key="enable_songs"
+            android:title="Hae soitettavia biisejä"
+            app:itemTextColor="#FFF"
+            android:layout="@layout/switch_pref"/>
+
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/channel_names"
+            android:entryValues="@array/channel_names"
+            android:key="default_channel"
+            android:title="Oletuskanava"
+            android:icon="@drawable/exo_icon_vr"
+            android:layout="@layout/pref" />
+
+        <EditTextPreference
+            android:enabled="false"
+            android:title="Aleksi Illikainen"
+            android:icon="@drawable/exo_icon_fullscreen_exit"
+            android:layout="@layout/pref" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

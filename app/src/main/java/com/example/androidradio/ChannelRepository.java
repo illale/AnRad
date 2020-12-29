@@ -13,14 +13,21 @@ public class ChannelRepository {
         channelDao = db.channelsDao();
     }
 
-    LiveData<Channel> getChannel(int id) {
-        return channelDao.getById(id);
-    }
 
     LiveData<List<Channel>> getAllChannels() {
         return channelDao.getAll();
     }
 
     LiveData<List<Channel>> getOrderedChannels() { return channelDao.getOrdered(); }
+
+    LiveData<List<String>> getOrderedAudioUrls() { return channelDao.getOrderedAudioUrls(); }
+
+    LiveData<List<Integer>> getOrderedIds() { return channelDao.getOrderedIds(); }
+
+    LiveData<List<Integer>> getOrderedImageIds() { return channelDao.getOrderedImageIds(); }
+
+    LiveData<Integer> getById(String name) { return channelDao.getById(name); }
+
+    LiveData<List<String>> getOrderedNames() { return channelDao.getOrderedNames(); }
 
 }

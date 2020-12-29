@@ -20,4 +20,12 @@ public class ChannelViewModel extends AndroidViewModel {
     }
 
     LiveData<List<Channel>> getOrderedChannels() { return repo.getOrderedChannels(); }
+
+    LiveData<List<Integer>> getOrderedImageIds() { return repo.getOrderedImageIds(); }
+
+    LiveData<List<Integer>> getOrderedIds() { return repo.getOrderedIds(); }
+
+    LiveData<List<String>> getOrderedAudioUrls() { return repo.getOrderedAudioUrls(); }
+
+    LiveData<Integer> getById(String name) { return repo.getById(name); }
 }

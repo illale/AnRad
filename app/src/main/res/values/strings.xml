@@ -6,15 +6,38 @@
     <string name="start_playback">Start playback</string>
     <string name="choose_next_channel">Choose next channel</string>
     <string-array name="channel_names">
-        <item>YLEX</item>
-        <item>RADIO NOVA</item>
-        <item>RADIO ROCK</item>
-        <item>RADIO HELMI</item>
         <item>AITO-ISKELMÄ</item>
+        <item>AURAN AALLOT</item>
+        <item>FUN TAMPERE</item>
         <item>ISKELMÄ</item>
-        <item>SUOMI-POP</item>
+        <item>JÄRVIRADIO</item>
+        <item>KASARI</item>
+        <item>LOOP</item>
         <item>NRJ</item>
-        <item>SUOMI-ROCK</item>
         <item>PUHE</item>
+        <item>RADIO 957</item>
+        <item>RADIO DEI</item>
+        <item>RADIO HELMI</item>
+        <item>RADIO HELSINKI</item>
+        <item>RADIO KAAKKO</item>
+        <item>RADIO KESKISUOMALAINEN</item>
+        <item>RADIO NOVA</item>
+        <item>RADIO PATMOS</item>
+        <item>RADIO POOKI</item>
+        <item>RADIO ROCK</item>
+        <item>RADIO VAASA</item>
+        <item>RADIO VOIMA</item>
+        <item>SAVON AALLOT</item>
+        <item>SUOMI-POP</item>
+        <item>SUOMI-ROCK</item>
+        <item>SUOMIRÄP</item>
+        <item>YLE KLASSINEN</item>
+        <item>YLE RADIO 1</item>
+        <item>YLE RADIO SUOMI</item>
+        <item>YLE SAMI</item>
+        <item>YLE VEGA</item>
+        <item>YLE X3M</item>
+        <item>YLEX</item>
+        <item>YSÄRI</item>
     </string-array>
 </resources>

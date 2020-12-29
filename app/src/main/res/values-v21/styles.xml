@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">#000</item>
     </style>
+
+    <style name="PreferenceScreen" parent="@style/PreferenceThemeOverlay">
+        <item name="android:textColor">#FFF</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

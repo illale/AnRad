@@ -46,23 +46,24 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements ControlListener {
     SimpleExoPlayer player = null;
     BottomNavigationView bottomNavigationView;
-    Uri uri = null;
-    int index = 0;
+    public static int index = 0;
     public static boolean PLAYING = false;
     public static boolean START = true;
     public static String song;
     public static String song_artist;
-    public static int image = R.drawable.aito_iskelma;
+    public static int image;
     private List<Channel> chans;
     public static String[] chan_names;
     public static List<Integer> chan_images = new ArrayList<>();
-    private SharedPreferences shPref;
+    public static SharedPreferences shPref;
     public static String[] pref;
     public static ControlBroadcast receiver;
     public static MainActivity Instance;
+    public static ChannelViewModel viewModel;
+    public static boolean show_songs;
     Handler handler = new Handler();
 
-    private Runnable runnableCode = new Runnable() {
+    private final Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
             if (PLAYING || START) {
@@ -73,26 +74,43 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         }
     };
 
+    public static int getChannelId(String name) {
+        for (int i = 0; i <= chan_names.length; i++) {
+            if (chan_names[i].equals(name)) {
+                image = chan_images.get(i);
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
     public String getChannelName() {
         return chans.get(index).getChannelName();
     }
 
-    public static String[] getAllSettings() {
-        return pref;
+    public static void setDefaultChannel(int i) {
+        shPref.edit().putInt("default_channel", i).apply();
+        shPref.edit().putInt("default_image", chan_images.get(i)).apply();
+    }
+
+    public static void setShowSongs(boolean show) {
+        shPref.edit().putBoolean("enable_songs", show).apply();
     }
 
     public void createSettings() {
-        Context context = getApplicationContext();
-        shPref = context.getSharedPreferences("Pref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shPref.edit();
-        editor.putBoolean("SHOW_SONGS", true);
-        editor.putBoolean("ENABLE_VISUALIZATION", false);
-        editor.putInt("DEFAULT_CHANNEL", 0);
+        editor.putBoolean("enable_songs", true);
+        editor.putInt("default_channel", 0);
+        editor.putInt("default_image", R.drawable.aito_iskelma);
         editor.apply();
     }
 
-    public void setDefaultChannel(int i) {
-            shPref.edit().putInt("DEFAULT_CHANNEL", i).apply();
+    public static void getDefaultChannel() {
+        index = shPref.getInt("default_channel", 0);
+        image = shPref.getInt("default_image", 0);
+        show_songs = shPref.getBoolean("enable_songs", true);
+        System.out.println("DEFAULT: " + index);
     }
 
     public void listSettings() {
@@ -398,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ChannelViewModel viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.getOrderedChannels().observe(this, channels -> {
             chans = channels;
             List<String> temp_chans = new ArrayList<>();
@@ -412,11 +430,16 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
             chan_images = temp_ids;
 
         });
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         openFragment(PlayerFragment.newInstance());
-        createSettings();
+        shPref = this.getSharedPreferences("Pref", Context.MODE_PRIVATE);
+        if (shPref.getAll().isEmpty()) {
+            createSettings();
+        }
         listSettings();
+        getDefaultChannel();
         receiver = new ControlBroadcast();
         Instance = this;
         IntentFilter filter = new IntentFilter("PAUSE");
@@ -430,15 +453,15 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
             Item -> {
                 if (Item.getItemId() == R.id.navigation_player) {
                     openFragment(PlayerFragment.newInstance());
-                    handler.post(runnableCode);
+                    if (show_songs) handler.post(runnableCode);
                     return true;
                 } else if (Item.getItemId() == R.id.navigation_channels) {
                     openFragment(ChannelFragment.newInstance());
-                    handler.removeCallbacks(runnableCode);
+                    if (show_songs) handler.removeCallbacks(runnableCode);
                     return true;
                 } else if (Item.getItemId() == R.id.navigation_settings) {
                     openFragment(SettingsFragment.newInstance());
-                    handler.removeCallbacks(runnableCode);
+                    if (show_songs) handler.removeCallbacks(runnableCode);
                     return true;
                 } else {
                     return false;

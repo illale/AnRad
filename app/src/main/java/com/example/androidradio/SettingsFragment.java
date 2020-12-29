@@ -1,24 +1,15 @@
 package com.example.androidradio;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class SettingsFragment extends Fragment {
-
+public class SettingsFragment extends PreferenceFragmentCompat {
+    Preference preference;
+    Preference disableSongs;
 
     public SettingsFragment() {
 
@@ -32,25 +23,35 @@ public class SettingsFragment extends Fragment {
         return fragment;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_settings, container, false);
-        FragmentActivity ct = getActivity();
-        String[] pref = MainActivity.getAllSettings();
-        RecyclerView recyclerView = view.findViewById(R.id.setting_recycler);
-        for (String pre: pref) {
-            System.out.println(pre);
-        }
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(ct);
-        recyclerView.setLayoutManager(manager);
-        RecyclerView.Adapter adapter = new MyAdapter(pref, R.layout.setting_view);
-        recyclerView.setAdapter(adapter);
-        return view;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        preference = findPreference("default_channel");
+        preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.e("CHANGE", "TO: ".concat(newValue.toString()));
+                MainActivity.setDefaultChannel(MainActivity.getChannelId(newValue.toString()));
+                return true;
+            }
+        });
+
+        disableSongs = findPreference("enable_songs");
+        disableSongs.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.e("CHANGE", "TO: ".concat(newValue.toString()));
+                MainActivity.setShowSongs((Boolean) newValue);
+                return true;
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.settings, rootKey);
     }
 }

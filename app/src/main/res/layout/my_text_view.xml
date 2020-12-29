@@ -9,6 +9,7 @@
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:padding="8dp"
         android:id="@+id/imageView"
         android:layout_marginRight="10dp"
         android:background="@drawable/circle_white"
@@ -22,5 +23,5 @@
         android:layout_gravity="center"
         android:textColor="#FFF"
         android:text="TextView"
-        android:textSize="40dp"/>
+        android:textSize="20sp"/>
 </LinearLayout>
