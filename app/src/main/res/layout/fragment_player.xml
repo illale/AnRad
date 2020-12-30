@@ -24,25 +24,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/sym_def_app_icon" />
 
-    <!--
-    <ImageButton
-        android:id="@+id/imageButton3"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_marginStart="135dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="64dp"
-        android:background="@drawable/circle"
-        android:onClick="releasePlayer"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton5"
-        app:srcCompat="@drawable/exo_icon_pause" />
-
-    -->
-
     <ImageButton
         android:id="@+id/playButton"
         android:layout_width="75dp"
@@ -57,7 +38,8 @@
         app:layout_constraintStart_toEndOf="@+id/imageButton5"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/exo_controls_play" />
+        app:srcCompat="@drawable/exo_controls_play"
+        android:contentDescription="@string/play_pause_button" />
 
     <ImageButton
         android:id="@+id/imageButton4"
@@ -71,10 +53,10 @@
         android:onClick="nextUri"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageButton2"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/exo_controls_next" />
+        app:srcCompat="@drawable/exo_controls_next"
+        android:contentDescription="@string/next_channel_button"/>
 
     <ImageButton
         android:id="@+id/imageButton5"
@@ -88,11 +70,11 @@
         android:onClick="previousUri"
         android:soundEffectsEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButton2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/exo_controls_previous" />
+        app:srcCompat="@drawable/exo_controls_previous"
+        android:contentDescription="@string/previous_channel_button"/>
 
     <TextView
         android:id="@+id/channelSong"
@@ -102,11 +84,11 @@
         android:layout_marginTop="59dp"
         android:layout_marginEnd="44dp"
         android:layout_marginBottom="54dp"
-        android:text="CHANNEL SONG CHANNEL SONG CHANNEL SOGN "
         android:ellipsize="marquee"
         android:singleLine="true"
         android:scrollHorizontally="true"
         android:textColor="#FFF"
+        android:fontFamily="sans-serif-medium"
         android:marqueeRepeatLimit="marquee_forever"
         app:layout_constraintBottom_toTopOf="@+id/imageButton5"
         app:layout_constraintEnd_toEndOf="parent"
@@ -122,8 +104,8 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="82dp"
         android:layout_marginBottom="25dp"
-        android:text="TextView"
         android:textColor="#FFF"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintBottom_toTopOf="@+id/imageButton5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

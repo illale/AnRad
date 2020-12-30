@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class ChannelViewModel extends AndroidViewModel {
-    private ChannelRepository repo;
+    private final ChannelRepository repo;
 
     public ChannelViewModel(Application app) {
         super(app);

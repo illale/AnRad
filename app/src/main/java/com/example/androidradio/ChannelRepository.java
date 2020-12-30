@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 public class ChannelRepository {
-    private ChannelDao channelDao;
+    private final ChannelDao channelDao;
 
 
     public ChannelRepository(Application application) {

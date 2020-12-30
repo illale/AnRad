@@ -18,34 +18,34 @@ import android.os.Process;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ControlService extends Service {
-    private Looper serviceLooper;
     private ServiceHandler serviceHandler;
     private NotificationCompat.Builder builder;
-    private Handler handler = new Handler();
-    private Notification notification;
+    private final Handler handler = new Handler();
     private NotificationManager manager;
 
 
-    private final class ServiceHandler extends Handler {
+    private static final class ServiceHandler extends Handler {
         public ServiceHandler(Looper looper) {
             super(looper);
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NotNull Message msg) {
 
         }
     }
 
-    private Runnable runnableCode = new Runnable() {
+    private final Runnable runnableCode = new Runnable() {
         @Override
         public void run() {
             builder.setContentTitle(MainActivity.song)
                     .setContentText(MainActivity.song_artist)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), MainActivity.image));
 
-            notification = builder.build();
+            Notification notification = builder.build();
 
             startForeground(255, notification);
 
@@ -59,7 +59,7 @@ public class ControlService extends Service {
                 Process.THREAD_PRIORITY_BACKGROUND);
         thread.start();
 
-        serviceLooper = thread.getLooper();
+        Looper serviceLooper = thread.getLooper();
         serviceHandler = new ServiceHandler(serviceLooper);
     }
 
@@ -77,8 +77,8 @@ public class ControlService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         createNotificationChannel();
-        Intent notificationIntent = new Intent(this, ControlService.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.Instance, 0, notificationIntent, 0);
 
         Intent prevIntent = new Intent(this, ControlBroadcast.class);
         prevIntent.setAction("PREVIOUS");

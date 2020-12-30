@@ -10,16 +10,16 @@ public class Channel {
     @PrimaryKey(autoGenerate = true) private int id;
 
     @ColumnInfo (name = "channel_name")
-    private String channelName;
+    private final String channelName;
 
     @ColumnInfo (name = "channel_audio_url")
-    private String channelAudioUrl;
+    private final String channelAudioUrl;
 
     @ColumnInfo (name = "channel_song_url")
-    private String channelSongUrl;
+    private final String channelSongUrl;
 
     @ColumnInfo (name = "channel_image_id")
-    private int channelImageId;
+    private final int channelImageId;
 
     //Constructor to set the values for one row of the table
     public Channel(String channelName, String channelAudioUrl, String channelSongUrl, int channelImageId) {

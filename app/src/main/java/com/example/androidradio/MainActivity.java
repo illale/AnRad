@@ -1,25 +1,22 @@
 package com.example.androidradio;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,6 +31,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements ControlListener {
+public class MainActivity extends AppCompatActivity implements ControlListener, ChannelChanger {
     SimpleExoPlayer player = null;
     BottomNavigationView bottomNavigationView;
     public static int index = 0;
@@ -74,17 +72,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         }
     };
 
-    public static int getChannelId(String name) {
-        for (int i = 0; i <= chan_names.length; i++) {
-            if (chan_names[i].equals(name)) {
-                image = chan_images.get(i);
-                return i;
-            }
-        }
-
-        return 0;
-    }
-
     public String getChannelName() {
         return chans.get(index).getChannelName();
     }
@@ -92,6 +79,11 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     public static void setDefaultChannel(int i) {
         shPref.edit().putInt("default_channel", i).apply();
         shPref.edit().putInt("default_image", chan_images.get(i)).apply();
+        if (!PLAYING) {
+            image = chan_images.get(i);
+            index = i;
+        }
+
     }
 
     public static void setShowSongs(boolean show) {
@@ -108,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
     public static void getDefaultChannel() {
         index = shPref.getInt("default_channel", 0);
-        image = shPref.getInt("default_image", 0);
+        if (!PLAYING) image = shPref.getInt("default_image", 0);
         show_songs = shPref.getBoolean("enable_songs", true);
         System.out.println("DEFAULT: " + index);
     }
@@ -131,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
 
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setReorderingAllowed(true);
         transaction.replace(R.id.container, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
@@ -141,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
     }
 
-    public MediaSource getAudioSource(DataSource.Factory factory, Uri address, String audioUrl) {
+    public MediaSource getAudioSource(DataSource.Factory factory, Uri address, @NotNull String audioUrl) {
         /*
         Check if requested channel url contains .m3u8. If it contains, return HlsMediaSource object,
         which is used for playing HLS streams. If it does not contain, return ProgressiveMediaSource
@@ -173,7 +166,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         player.setPlayWhenReady(true);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void play(View v) {
         /*
         If player object has not been created, create one with selected channel, else
@@ -187,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
             changeButton();
             setImage(index);
             setSong(index);
-
         } else {
             PLAYING = false;
             changeButton();
@@ -265,22 +256,10 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         }
     }
 
-    public int checkChannel(String channel) {
-        //Finds and returns the index of given channel
-        //NOTE: should be changed, when ROOM is used
-        for (int i = 0; i <= chan_names.length; i++) {
-            if (chan_names[i].equals(channel)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
     public void previousUri() {
         if (player != null) {
             releasePlayer();
         }
-
         if (index == 0) {
             index = chans.size() - 1;
         } else {
@@ -292,11 +271,9 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     }
 
     public void nextUri() {
-
         if (player != null) {
             releasePlayer();
         }
-
         if (index == chans.size() - 1) {
             index = 0;
         } else {
@@ -321,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         }
     }
 
-    public void setUri(View v) {
+    public void setUri(int i) {
         /*
         This method is used only when selecting channel from recyclerview list
         */
@@ -331,9 +308,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
             player.release();
         }
 
-
         //Get the index of chosen channel, that previous and next channels can be chosen correctly
-        index = checkChannel(((TextView)v).getText().toString());
+        index = i;
 
         setImage(index);
         setSong(index);
@@ -411,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
         releasePlayer();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -423,6 +399,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
             List<Integer> temp_ids = new ArrayList<>();
             for (Channel chn: channels) {
                 temp_chans.add(chn.getChannelName());
+                System.out.println(chn.getChannelName());
                 temp_ids.add(chn.getChannelImageId());
             }
             chan_names = new String[ temp_chans.size()];
@@ -481,5 +458,10 @@ public class MainActivity extends AppCompatActivity implements ControlListener {
     @Override
     public void previous() {
         previousUri();
+    }
+
+    @Override
+    public void setChannel(int i) {
+        setUri(i);
     }
 }

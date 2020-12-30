@@ -2,6 +2,7 @@ package com.example.androidradio;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class ChannelFragment extends Fragment {
     public ChannelFragment() {
     }
 
+    @NonNull
     public static ChannelFragment newInstance() {
         Bundle args = new Bundle();
         ChannelFragment fragment = new ChannelFragment();
@@ -49,8 +51,12 @@ public class ChannelFragment extends Fragment {
         for (Integer img: channel_images) {
             d.add(getResources().getDrawable(img));
         }
-        RecyclerView.Adapter adapter = new MyAdapter(channels, d, R.layout.my_text_view);
+        RecyclerView.Adapter<MyAdapter.MyViewHolder> adapter = new MyAdapter(channels, d, R.layout.my_text_view);
         recyclerView.setAdapter(adapter);
+
+        TransitionInflater transitionInflater = TransitionInflater.from(getContext());
+        setEnterTransition(transitionInflater.inflateTransition(R.transition.slide_out));
+        setExitTransition(transitionInflater.inflateTransition(R.transition.slide_out));
 
         return view;
     }

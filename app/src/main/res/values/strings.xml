@@ -5,39 +5,124 @@
     <string name="pause_playback">Pause playback</string>
     <string name="start_playback">Start playback</string>
     <string name="choose_next_channel">Choose next channel</string>
+    <string name="channel_logo">Channel logo</string>
+    <string name="channel_name">Channel name</string>
+    <string name="setting_title">Setting title</string>
+    <string name="setting_description">Setting description</string>
+    <string name="default_channel_icon">Default channel icon</string>
+    <string name="play_pause_button">Play/pause button</string>
+    <string name="next_channel_button">Next channel button</string>
+    <string name="previous_channel_button">Previous channel button</string>
+    <string name="kanavat">Kanavat</string>
+    <string name="soitin">Soitin</string>
+    <string name="asetukset">Asetukset</string>
+    <string-array name="maakunnat">
+        <item>Helsinki</item>
+        <item>Hämeenlinna</item>
+        <item>Joensuu</item>
+        <item>Jyväskylä</item>
+        <item>Kajaani</item>
+        <item>Kemi</item>
+        <item>Kokkola</item>
+        <item>Kotka</item>
+        <item>Kuopio</item>
+        <item>Lahti</item>
+        <item>Lappeenranta</item>
+        <item>Mikkeli</item>
+        <item>Oulu</item>
+        <item>Pohjanmaa</item>
+        <item>Pori</item>
+        <item>Rovaniemi</item>
+        <item>Tampere</item>
+        <item>Turku</item>
+    </string-array>
+    <string-array name="maakunta_index">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
     <string-array name="channel_names">
-        <item>AITO-ISKELMÄ</item>
-        <item>AURAN AALLOT</item>
-        <item>FUN TAMPERE</item>
-        <item>ISKELMÄ</item>
-        <item>JÄRVIRADIO</item>
-        <item>KASARI</item>
-        <item>LOOP</item>
+        <item>Aito-Iskelmä</item>
+        <item>Auran Aallot</item>
+        <item>Fun Tampere</item>
+        <item>Iskelmä</item>
+        <item>Järviradio</item>
+        <item>Kasari</item>
+        <item>Loop</item>
         <item>NRJ</item>
-        <item>PUHE</item>
-        <item>RADIO 957</item>
-        <item>RADIO DEI</item>
-        <item>RADIO HELMI</item>
-        <item>RADIO HELSINKI</item>
-        <item>RADIO KAAKKO</item>
-        <item>RADIO KESKISUOMALAINEN</item>
-        <item>RADIO NOVA</item>
-        <item>RADIO PATMOS</item>
-        <item>RADIO POOKI</item>
-        <item>RADIO ROCK</item>
-        <item>RADIO VAASA</item>
-        <item>RADIO VOIMA</item>
-        <item>SAVON AALLOT</item>
-        <item>SUOMI-POP</item>
-        <item>SUOMI-ROCK</item>
-        <item>SUOMIRÄP</item>
-        <item>YLE KLASSINEN</item>
-        <item>YLE RADIO 1</item>
-        <item>YLE RADIO SUOMI</item>
-        <item>YLE SAMI</item>
-        <item>YLE VEGA</item>
-        <item>YLE X3M</item>
-        <item>YLEX</item>
-        <item>YSÄRI</item>
+        <item>Radio 957</item>
+        <item>Radio Dei</item>
+        <item>Radio Helmi</item>
+        <item>Radio Helsinki</item>
+        <item>Radio Kaakko</item>
+        <item>Radio Keskisuomalainen</item>
+        <item>Radio Nova</item>
+        <item>Radio Patmos</item>
+        <item>Radio Pooki</item>
+        <item>Radio Rock</item>
+        <item>Radio Vaasa</item>
+        <item>Radio Voima</item>
+        <item>Savon Aallot</item>
+        <item>Suomi-Pop</item>
+        <item>Suomi-Rock</item>
+        <item>Suomiräp</item>
+        <item>Yle Klassinen</item>
+        <item>Yle Puhe</item>
+        <item>Yle Radio 1</item>
+        <item>Yle Radio Suomi</item>
+        <item>Yle Sami</item>
+        <item>Yle Vega</item>
+        <item>Yle X3M</item>
+        <item>Ylex</item>
+        <item>Ysäri</item>
+    </string-array>
+    <string-array name="channel_index">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
+        <item>26</item>
+        <item>27</item>
+        <item>28</item>
+        <item>29</item>
+        <item>30</item>
+        <item>31</item>
+        <item>32</item>
     </string-array>
 </resources>

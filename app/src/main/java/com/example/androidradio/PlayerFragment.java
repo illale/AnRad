@@ -1,7 +1,9 @@
 package com.example.androidradio;
 
+
 import android.os.Bundle;
 import android.os.Handler;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class PlayerFragment extends Fragment {
     Handler handler = new Handler();
@@ -20,14 +24,14 @@ public class PlayerFragment extends Fragment {
 
     }
 
-    public static PlayerFragment newInstance() {
+    public static @NotNull PlayerFragment newInstance() {
         Bundle args = new Bundle();
         PlayerFragment fragment = new PlayerFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    private Runnable updateUI = new Runnable() {
+    private final Runnable updateUI = new Runnable() {
         @Override
         public void run() {
             TextView song = getView().findViewById(R.id.channelSong);
@@ -62,6 +66,11 @@ public class PlayerFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TransitionInflater transitionInflater = TransitionInflater.from(requireContext());
+
+        setEnterTransition(transitionInflater.inflateTransition(R.transition.test));
+        postponeEnterTransition();
+
         View view = inflater.inflate(R.layout.fragment_player, container, false);
         ImageView img = view.findViewById(R.id.imageView);
         img.setImageDrawable(getResources().getDrawable(MainActivity.image));
@@ -80,6 +89,9 @@ public class PlayerFragment extends Fragment {
             button.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_play));
         }
         button.invalidate();
+
+        startPostponedEnterTransition();
+
         return view;
     }
 

@@ -4,7 +4,11 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:id="@+id/text_holder"
+    android:clickable="true"
+    android:background="@drawable/text_custom"
+    android:focusable="true">
 
     <ImageView
         android:layout_width="60dp"
@@ -13,15 +17,17 @@
         android:id="@+id/imageView"
         android:layout_marginRight="10dp"
         android:background="@drawable/circle_white"
-        app:srcCompat="@android:drawable/sym_def_app_icon"/>
+        app:srcCompat="@android:drawable/sym_def_app_icon"
+        android:contentDescription="@string/channel_logo" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="setUri"
         android:layout_gravity="center"
+        android:fontFamily="sans-serif-medium"
         android:textColor="#FFF"
-        android:text="TextView"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:focusable="true"
+        android:contentDescription="@string/channel_name"/>
 </LinearLayout>

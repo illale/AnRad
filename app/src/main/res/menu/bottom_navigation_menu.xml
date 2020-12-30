@@ -3,13 +3,13 @@
     <item
         android:id="@+id/navigation_channels"
         android:icon="@drawable/ic_menu_black_24dp"
-        android:title="Kanavat" />
+        android:title="@string/kanavat" />
     <item
         android:id="@+id/navigation_player"
         android:icon="@drawable/ic_play_circle_outline_black_24dp"
-        android:title="Soitin" />
+        android:title="@string/soitin" />
     <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings_black_24dp"
-        android:title="Asetukset" />
+        android:title="@string/asetukset" />
 </menu>

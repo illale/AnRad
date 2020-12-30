@@ -7,23 +7,37 @@
             android:background="#FFFFFF"
             android:icon="@drawable/ic_baseline_album_24"
             android:key="enable_songs"
+            android:defaultValue="true"
             android:title="Hae soitettavia biisejä"
+            android:summary="Voit poistaa biisi-haun pois käytöstä. Vähentää hieman netin käyttöä"
             app:itemTextColor="#FFF"
             android:layout="@layout/switch_pref"/>
 
         <ListPreference
-            android:defaultValue="1"
+            android:defaultValue="0"
             android:entries="@array/channel_names"
-            android:entryValues="@array/channel_names"
+            android:entryValues="@array/channel_index"
             android:key="default_channel"
             android:title="Oletuskanava"
-            android:icon="@drawable/exo_icon_vr"
+            android:summary="Valitse kanava, joka on oletuksena käynnistyessä"
+            android:icon="@drawable/ic_baseline_album_24"
             android:layout="@layout/pref" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/maakunnat"
+            android:entryValues="@array/maakunta_index"
+            android:key="maakunta"
+            android:title="Maakunta"
+            android:summary="Valitse maakunta"
+            android:icon="@drawable/ic_baseline_edit_location_alt_24"
+            android:layout="@layout/pref"/>
 
         <EditTextPreference
             android:enabled="false"
             android:title="Aleksi Illikainen"
-            android:icon="@drawable/exo_icon_fullscreen_exit"
+            android:summary="www.github.com/illale/AnRad"
+            android:icon="@drawable/ic_baseline_copyright_24"
             android:layout="@layout/pref" />
 
     </PreferenceCategory>
