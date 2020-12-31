@@ -16,6 +16,7 @@
     <string name="kanavat">Kanavat</string>
     <string name="soitin">Soitin</string>
     <string name="asetukset">Asetukset</string>
+    <string name="acra_toast_text">Kaiku on kaatunnut. Ole hyvä ja lähetä sähköposti seuraavassa valikossa</string>
     <string-array name="maakunnat">
         <item>Helsinki</item>
         <item>Hämeenlinna</item>

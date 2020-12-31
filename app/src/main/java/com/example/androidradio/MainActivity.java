@@ -390,7 +390,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.getOrderedChannels().observe(this, channels -> {
@@ -424,6 +423,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
         filter.addAction("PREVIOUS");
         this.registerReceiver(receiver, filter);
         setFragment(PlayerFragment.newInstance());
+        super.onCreate(savedInstanceState);
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
