@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="150sp"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="10sp"
+    android:layout_marginLeft="3sp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:id="@+id/text_holder"
     android:clickable="true"
-    android:background="@drawable/text_custom"
+    android:background="@drawable/corners"
     android:focusable="true">
 
     <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:padding="8dp"
+        android:layout_width="60sp"
+        android:layout_height="60sp"
         android:id="@+id/imageView"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="10sp"
         android:background="@drawable/circle_white"
         app:srcCompat="@android:drawable/sym_def_app_icon"
         android:contentDescription="@string/channel_logo" />
@@ -26,8 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="sans-serif-medium"
-        android:textColor="#FFF"
-        android:textSize="20sp"
+        android:textColor="@color/colorAccent"
+        android:textSize="10sp"
         android:focusable="true"
         android:contentDescription="@string/channel_name"/>
 </LinearLayout>

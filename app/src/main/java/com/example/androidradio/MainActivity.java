@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
     public static MainActivity Instance;
     public static ChannelViewModel viewModel;
     public static boolean show_songs;
+    public static String channel_name;
     Handler handler = new Handler();
 
     private final Runnable runnableCode = new Runnable() {
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
     public static void setDefaultChannel(int i) {
         shPref.edit().putInt("default_channel", i).apply();
         shPref.edit().putInt("default_image", chan_images.get(i)).apply();
+        shPref.edit().putString("default_channel_name", chan_names[i]).apply();
         if (!PLAYING) {
             image = chan_images.get(i);
             index = i;
@@ -95,14 +97,15 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
         editor.putBoolean("enable_songs", true);
         editor.putInt("default_channel", 0);
         editor.putInt("default_image", R.drawable.aito_iskelma);
+        editor.putString("default_channel_name", "Aito Iskelmä");
         editor.apply();
     }
 
     public static void getDefaultChannel() {
         index = shPref.getInt("default_channel", 0);
-        if (!PLAYING) image = shPref.getInt("default_image", 0);
+        if (!PLAYING) image = shPref.getInt("default_image", R.drawable.aito_iskelma);
         show_songs = shPref.getBoolean("enable_songs", true);
-        System.out.println("DEFAULT: " + index);
+        channel_name = shPref.getString("default_channel_name", "Aito Iskelmä");
     }
 
     public void listSettings() {
@@ -206,14 +209,15 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
 
     public void setImage(int i) {
         image = chan_images.get(i);
+        channel_name = chans.get(i).getChannelName();
     }
 
     @SuppressLint("SetTextI18n")
     public void setSong(int i) {
         String url = getChannelSongUrl(i);
         if (url.equals("None")) {
-            song = getChannelName();
-            song_artist = song;
+            song = "Kuuntelet nyt:";
+            song_artist = getChannelName();
         } else {
             RequestQueue queue = Volley.newRequestQueue(this);
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
@@ -226,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
                         if (response.optJSONObject(key) != null) {
                             if (response.getJSONObject(key).has("title")) {
                                 song = response.getJSONObject(key).getString("title");
-
                                 if (response.getJSONObject(key).has("artist")) {
                                     song_artist = response.getJSONObject(key).getString("artist");
                                 } else if (response.getJSONObject(key).has("performer")) {
@@ -390,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.getOrderedChannels().observe(this, channels -> {
@@ -423,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
         filter.addAction("PREVIOUS");
         this.registerReceiver(receiver, filter);
         setFragment(PlayerFragment.newInstance());
-        super.onCreate(savedInstanceState);
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =

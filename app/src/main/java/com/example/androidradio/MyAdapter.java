@@ -42,7 +42,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     public void onBindViewHolder(@NotNull MyViewHolder holder, int position) {
-
         holder.textView.setText(data[position]);
         holder.view.setOnClickListener(v -> {
             int itemPos = holder.getLayoutPosition();

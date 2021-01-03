@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
 
 public class PlayerFragment extends Fragment {
@@ -37,10 +38,14 @@ public class PlayerFragment extends Fragment {
             TextView song = getView().findViewById(R.id.channelSong);
             TextView artist = getView().findViewById(R.id.channelArtist);
             ImageView image = getView().findViewById(R.id.imageView);
+            TextView channel = getView().findViewById(R.id.channelName);
             song.setText(MainActivity.song);
             artist.setText(MainActivity.song_artist);
+            channel.setText(MainActivity.channel_name);
             image.setImageDrawable(getResources().getDrawable(MainActivity.image));
+            channel.invalidate();
             song.invalidate();
+            image.invalidate();
             artist.invalidate();
             handler.postDelayed(this, 500);
         }
@@ -82,6 +87,9 @@ public class PlayerFragment extends Fragment {
         TextView artistText = view.findViewById(R.id.channelArtist);
         artistText.setText(MainActivity.song_artist);
         artistText.invalidate();
+        TextView channel = view.findViewById(R.id.channelName);
+        channel.setText(MainActivity.channel_name);
+        channel.invalidate();
         ImageButton button = view.findViewById(R.id.playButton);
         if (MainActivity.PLAYING) {
             button.setImageDrawable(getResources().getDrawable(R.drawable.exo_controls_pause));

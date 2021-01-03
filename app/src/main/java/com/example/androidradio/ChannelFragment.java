@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,7 +46,7 @@ public class ChannelFragment extends Fragment {
         channels = MainActivity.chan_names;
         channel_images = MainActivity.chan_images;
         RecyclerView recyclerView = view.findViewById(R.id.recycler);
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(ct);
+        RecyclerView.LayoutManager manager = new GridLayoutManager(ct, 2);
         recyclerView.setLayoutManager(manager);
         List<Drawable> d = new ArrayList<>();
         for (Integer img: channel_images) {

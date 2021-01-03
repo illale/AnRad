@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@color/colorPrimary"
     tools:context=".MainActivity">
 
     <FrameLayout
@@ -18,9 +18,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginTop="8dp"
-            android:background="@color/colorPrimary"
-            app:itemIconTint="@color/design_default_color_background"
-            app:itemTextColor="@color/exo_edit_mode_background_color"
+            android:background="@color/colorPrimaryLight"
+            app:itemIconTint="@color/colorAccent"
+            app:itemTextColor="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

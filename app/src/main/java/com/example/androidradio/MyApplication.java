@@ -23,7 +23,7 @@ public class MyApplication extends android.app.Application {
                 .setAlsoReportToAndroidFramework(true);
         builder.getPluginConfigurationBuilder(MailSenderConfigurationBuilder.class).setMailTo("kaiku.chrash@gmail.com")
                 .setSubject("Kaiku Crash Report")
-                .setEnabled(true);xd
+                .setEnabled(true);
         ACRA.init(this, builder);
     }
 }
