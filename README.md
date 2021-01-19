@@ -1,3 +1,3 @@
 # AnRad
 
-Radio listening app for finnish radio stations
+Android app for listening Finnish radio stations
