@@ -9,10 +9,11 @@ import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    private final String[] data;
+    private final ArrayList<String> data;
     private final List<Drawable> ids;
     private final int LayoutId;
 
@@ -28,7 +29,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    public MyAdapter(String[] list, List<Drawable> image_ids, int layout) {
+    public MyAdapter(ArrayList<String> list, List<Drawable> image_ids, int layout) {
         data = list;
         ids = image_ids;
         this.LayoutId = layout;
@@ -42,7 +43,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     public void onBindViewHolder(@NotNull MyViewHolder holder, int position) {
-        holder.textView.setText(data[position]);
+        holder.textView.setText(data.get(position));
         holder.view.setOnClickListener(v -> {
             int itemPos = holder.getLayoutPosition();
             MainActivity.Instance.setChannel(itemPos);
@@ -53,6 +54,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     public int getItemCount() {
-        return data.length;
+        return data.size();
     }
 }

@@ -8,8 +8,8 @@
             android:icon="@drawable/ic_baseline_album_24"
             android:key="enable_songs"
             android:defaultValue="true"
-            android:title="Näytä soitettava kappale"
-            android:summary="Voit poistaa biisi-haun pois käytöstä. Vähentää hieman netin käyttöä"
+            android:title="Piilota soitettava kappale"
+            android:summary="Piilottaa soitettavan kappaleen aloitusnäytöstä. Piilotaminen vähentää hieman yhteyden kuormitusta"
             app:itemTextColor="#FFF"
             android:layout="@layout/switch_pref"/>
 
@@ -19,7 +19,7 @@
             android:entryValues="@array/channel_index"
             android:key="default_channel"
             android:title="Oletuskanava"
-            android:summary="Valitse kanava, joka on oletuksena käynnistyessä"
+            android:summary="Valitse kanava, joka on aloitusnäytöllä, kun Kaiku avataan uudestaan"
             android:icon="@drawable/ic_baseline_album_24"
             android:layout="@layout/pref" />
 

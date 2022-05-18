@@ -1,0 +1,202 @@
+{
+  "channels": [
+    {
+      "name": "Ylex",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_2@113879/index_64_a-p.m3u8?sd=10&rebase=on",
+      "song_url": "https://areena.api.yle.fi/v1/songs/current.json?app_id=areena_web_personal_prod&app_key=6c64d890124735033c50099ca25dd2fe&client=yle-areena-web&language=fi&v=7&serviceId=ylex",
+      "image": "ylex"
+    },
+    {
+      "name": "Radio Nova",
+      "url": "https://stream.bauermedia.fi/radionova/radionova_64.aac",
+      "song_url": "https://www.radionova.fi/feed/onair",
+      "image": "radionova"
+    },
+    {
+      "name": "Suomi-Rock",
+      "url": "https://stream.bauermedia.fi/suomirock/suomirock_64.aac",
+      "song_url": "https://www.radiosuomirock.fi/feed/onair",
+      "image": "suomirock"
+    },
+    {
+      "name": "NRJ",
+      "url": "https://stream.bauermedia.fi/nrj/nrj_64.aac",
+      "song_url": "https://nrj.fi/webplayer/json/energy.json",
+      "image": "nrj"
+    },
+    {
+      "name": "Iskelmä",
+      "url": "https://stream.bauermedia.fi/iskelma/iskelma_64.aac",
+      "song_url": "https://www.iskelma.fi/feed/onair",
+      "image": "iskelma_valt"
+    },
+    {
+      "name": "Yle Puhe",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_5@113882/index_128_a-p.m3u8?sd=10&rebase=on",
+      "song_url": "None",
+      "image": "yle_puhe"
+    },
+    {
+      "name": "Radio Helmi",
+      "url": "https://digitacdn.akamaized.net/hls/live/629243/radiohelmi/master-128000.m3u8",
+      "song_url": "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=57&next_token=&limit=1",
+      "image": "helmiradio"
+    },
+    {
+      "name": "Radio Rock",
+      "url": "https://digitacdn.akamaized.net/hls/live/629243/radiorock/master.m3u8",
+      "song_url": "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=52&next_token=&limit=1",
+      "image": "radio_rock"
+    },
+    {
+      "name": "Suomi-Pop",
+      "url": "https://digitacdn.akamaized.net/hls/live/629243/radiosuomipop/master-128000.m3u8",
+      "song_url": "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=53&next_token=&limit=1",
+      "image": "radio_suomipop"
+    },
+    {
+      "name": "Aito-Iskelmä",
+      "url": "https://supla.digitacdn.net/live/_definst_/supla/aitoiskelma/playlist.m3u8",
+      "song_url": "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=58&next_token=&limit=1",
+      "image": "aito_iskelma"
+    },
+    {
+      "name": "Auran Aallot",
+      "url": "https://stream.bauermedia.fi/auranaallot/auranaallot_64.aac",
+      "song_url": "None",
+      "image": "auran_aallot"
+    },
+    {
+      "name": "Fun Tampere",
+      "url": "https://st.downtime.fi/fun.mp3",
+      "song_url": "None",
+      "image": "fun_tampere"
+    },
+    {
+      "name": "Järviradio",
+      "url": "https://jarviradio.radiotaajuus.fi:9000/jr",
+      "song_url": "None",
+      "image": "jarviradio"
+    },
+    {
+      "name": "Kasari",
+      "url": "https://stream.bauermedia.fi/kasari/kasari_64.aac",
+      "song_url": "https://www.kasari.fi/feed/onair",
+      "image": "kasari"
+    },
+    {
+      "name": "Loop",
+      "url": "https://supla.digitacdn.net/live/_definst_/supla/loop/playlist.m3u8",
+      "song_url": "https://supla-playlist.nm-services.nelonenmedia.fi/playlist?channel=54&next_token=&limit=1",
+      "image": "loop"
+    },
+    {
+      "name": "Radio 957",
+      "url": "https://stream.bauermedia.fi/radio957/radio957_64.aac",
+      "song_url": "https://www.957.fi/feed/onair",
+      "image": "radio_957"
+    },
+    {
+      "name": "Radio Dei",
+      "url": "https://stream.dei.fi:8443/yleisohjelma",
+      "song_url": "None",
+      "image": "radio_dei_kajaani"
+    },
+    {
+      "name": "Radio Helsinki",
+      "url": "https://stream.radiohelsinki.fi",
+      "song_url": "None",
+      "image": "radio_helsinki"
+    },
+    {
+      "name": "Radio Kaakko",
+      "url": "https://wr2.downtime.fi/kaakko.aac",
+      "song_url": "None",
+      "image": "radio_kaakko"
+    },
+    {
+      "name": "Radio Keskisuomalainen",
+      "url": "https://cast.radiokeskisuomalainen.fi/radiokeskisuomalainen",
+      "song_url": "https://www.radiokeskisuomalainen.fi/api.json",
+      "image": "radio_keskisuomalainen"
+    },
+    {
+      "name": "Radio Patmos",
+      "url": "https://s3.yesstreaming.net:9011/radio",
+      "song_url": "None",
+      "image": "radio_patmos"
+    },
+    {
+      "name": "Radio Pooki",
+      "url": "https://stream.bauermedia.fi/radiopooki/radiopooki_64.aac",
+      "song_url": "https://www.radiopooki.fi/feed/onair",
+      "image": "radio_pooki"
+    },
+    {
+      "name": "Radio Vaasa",
+      "url": "https://stream.protonbroadcast.com:8443/radiovaasa.mp3",
+      "song_url": "None",
+      "image": "radio_vaasa"
+    },
+    {
+      "name": "Radio Voima",
+      "url": "https://cast2.radiovoima.fi/voima.mp3",
+      "song_url": "None",
+      "image": "radio_voima"
+    },
+    {
+      "name": "Savon Aallot",
+      "url": "https://cast.savonaallot.fi/savonaallot",
+      "song_url": "None",
+      "image": "savon_aallot"
+    },
+    {
+      "name": "Suomiräp",
+      "url": "https://stream.bauermedia.fi/suomirap/suomirap_64.aac",
+      "song_url": "https://listenapi.planetradio.co.uk/api9/initdadi/suomirap",
+      "image": "suomirap"
+    },
+    {
+      "name": "Yle Klassinen",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_4@113881/master.m3u8?set-segment-duration=quality",
+      "song_url": "None",
+      "image": "yle_klassinen"
+    },
+    {
+      "name": "Yle Radio 1",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_1@113878/master.m3u8?set-segment-duration=quality",
+      "song_url": "None",
+      "image": "yle_radio_1"
+    },
+    {
+      "name": "Yle Radio Suomi",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_3@113880/master.m3u8?set-segment-duration=quality",
+      "song_url": "None",
+      "image": "yle_puhe"
+    },
+    {
+      "name": "Yle Vega",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_7@113884/master.m3u8?set-segment-duration=quality",
+      "song_url": "None",
+      "image": "yle_puhe"
+    },
+    {
+      "name": "Yle X3M",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_6@113883/master.m3u8?set-segment-duration=quality",
+      "song_url": "None",
+      "image": "yle_x3m"
+    },
+    {
+      "name": "Ysäri",
+      "url": "https://stream.bauermedia.fi/ysari/ysari_64.aac",
+      "song_url": "https://www.ysariradio.fi/feed/onair",
+      "image": "ysari"
+    },
+    {
+      "name": "Yle Sami",
+      "url": "https://yleuni-f.akamaihd.net/i/yleliveradiohd_33@113910/master.m3u8?set-segment-duration=quality",
+      "song_url": "None",
+      "image": "yle_sami_radio"
+    }
+  ]
+}

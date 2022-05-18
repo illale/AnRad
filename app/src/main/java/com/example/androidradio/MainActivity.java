@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -51,15 +50,15 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
     public static String song_artist;
     public static int image;
     private List<Channel> chans;
-    public static String[] chan_names;
+    public static ArrayList<String> chan_names;
     public static List<Integer> chan_images = new ArrayList<>();
     public static SharedPreferences shPref;
     public static String[] pref;
     public static ControlBroadcast receiver;
     public static MainActivity Instance;
-    public static ChannelViewModel viewModel;
     public static boolean show_songs;
     public static String channel_name;
+    public static ChannelList channels;
     Handler handler = new Handler();
 
     private final Runnable runnableCode = new Runnable() {
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
     public static void setDefaultChannel(int i) {
         shPref.edit().putInt("default_channel", i).apply();
         shPref.edit().putInt("default_image", chan_images.get(i)).apply();
-        shPref.edit().putString("default_channel_name", chan_names[i]).apply();
+        shPref.edit().putString("default_channel_name", chan_names.get(i)).apply();
         if (!PLAYING) {
             image = chan_images.get(i);
             index = i;
@@ -161,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
         streams, in this context it is used only to read data from streams that are distributed online
         */
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
-                Util.getUserAgent(getApplicationContext(), "AndroidRadio"));
+                Util.getUserAgent(getApplicationContext(), "Kaiku"));
         MediaSource audioSource = getAudioSource(dataSourceFactory, Uri.parse(audioUrl), audioUrl);
         //Inject MediaSource into SimpleExoPlayer.
         player.prepare(audioSource);
@@ -226,7 +225,8 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
                     String key;
                     while(rep.hasNext()) {
                         key = rep.next();
-
+                        //Käytä YLEn APIA?
+                        //Lisää group kanaviin, ja jaa JSONin haku niiden perusteella eri funktioihin
                         if (response.optJSONObject(key) != null) {
                             if (response.getJSONObject(key).has("title")) {
                                 song = response.getJSONObject(key).getString("title");
@@ -378,11 +378,6 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         stopService();
@@ -390,27 +385,19 @@ public class MainActivity extends AppCompatActivity implements ControlListener, 
         releasePlayer();
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
-        viewModel.getOrderedChannels().observe(this, channels -> {
-            chans = channels;
-            List<String> temp_chans = new ArrayList<>();
-            List<Integer> temp_ids = new ArrayList<>();
-            for (Channel chn: channels) {
-                temp_chans.add(chn.getChannelName());
-                System.out.println(chn.getChannelName());
-                temp_ids.add(chn.getChannelImageId());
-            }
-            chan_names = new String[ temp_chans.size()];
-            temp_chans.toArray(chan_names);
-            chan_images = temp_ids;
-
-        });
-
+        ChannelLoader loader = new ChannelLoader();
+        ArrayList<Channel> channels = loader.build("channels.json", this.getAssets());
+        chan_images = new ArrayList<>();
+        chan_names = new ArrayList<>();
+        chans = channels;
+        for (Channel schn: channels) {
+            chan_images.add(getResources().getIdentifier("com.example.androidradio:drawable/".concat(schn.getChannelImage()), null, null));
+            chan_names.add(schn.getChannelName());
+        }
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         openFragment(PlayerFragment.newInstance());

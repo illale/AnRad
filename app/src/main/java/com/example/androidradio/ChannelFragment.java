@@ -12,14 +12,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelFragment extends Fragment {
-    String[] channels;
+    ArrayList<String> channels;
     List<Integer> channel_images;
 
     public ChannelFragment() {

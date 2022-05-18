@@ -7,8 +7,6 @@ import org.acra.*;
 import org.acra.annotation.*;
 import org.acra.config.CoreConfigurationBuilder;
 import org.acra.config.MailSenderConfigurationBuilder;
-import org.acra.config.ToastConfiguration;
-import org.acra.config.ToastConfigurationBuilder;
 import org.acra.data.StringFormat;
 
 @AcraCore(buildConfigClass = BuildConfig.class)
